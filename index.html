@@ -3,43 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ウェアプリントLAB｜8ビットで学ぶオリジナルTシャツ</title>
+  <title>ウェアプリント冒険島｜8ビットで学ぶオリジナルTシャツ</title>
   <meta name="description" content="ハダオジくんとゆうが、オリジナルTシャツやウェアプリントの疑問を分かりやすく解説します。">
   <link rel="icon" href="./public/favicon.svg">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <div class="scanlines" aria-hidden="true"></div>
-  <header class="game-header">
+  <header class="game-header island-header">
     <a class="logo" href="#top"><span class="logo-pixel">W</span><span>WEAR PRINT<br><b>LAB</b></span></a>
     <nav aria-label="メインメニュー"><a href="#guide">GUIDE</a><a href="#topics">STAGE</a><a href="#articles">ARTICLE</a></nav>
     <a class="pixel-button small" href="#guide">START ▶</a>
   </header>
 
   <main id="top">
-    <section class="hero">
+    <section class="hero island-hero">
+      <div class="pixel-cloud cloud-one" aria-hidden="true"></div>
+      <div class="pixel-cloud cloud-two" aria-hidden="true"></div>
+      <div class="island-mountain" aria-hidden="true"></div>
+      <div class="palm palm-left" aria-hidden="true">🌴</div>
+      <div class="palm palm-right" aria-hidden="true">🌴</div>
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-copy">
-        <p class="status"><span>●</span> PRINT QUEST / READY</p>
-        <h1>つくりたいを、<br><em>カタチ</em>にする<br>冒険へ。</h1>
-        <p class="lead">オリジナルTシャツの「分からない」を、<br>2人と一緒にひとつずつ攻略しよう。</p>
-        <div class="hero-actions"><a class="pixel-button" href="#guide">▶ クエストをはじめる</a><a class="sub-link" href="#articles">新着記事を見る ↓</a></div>
+        <p class="status"><span>●</span> PRINT ISLAND / WORLD 1-1</p>
+        <h1>めざせ！<br><em>プリント</em><br>冒険島</h1>
+        <p class="lead">Tシャツづくりの「分からない」を、<br>2人と一緒に島を巡って攻略しよう！</p>
+        <div class="hero-actions"><a class="pixel-button" href="#guide">▶ 冒険をはじめる</a><a class="sub-link" href="#articles">攻略記事を見る ↓</a></div>
       </div>
       <div class="characters" aria-label="案内役のハダオジくんとゆう">
-        <div class="speech speech-left">プリントのことなら<br><b>まかせて！</b></div>
-        <div class="speech speech-right">初心者目線で<br><b>質問します！</b></div>
+        <div class="speech speech-left">島のプリントは<br><b>まかせて！</b></div>
+        <div class="speech speech-right">一緒に冒険<br><b>しよう！</b></div>
         <img class="hadaoji" src="./public/hadaoji-kun.png" alt="店長役のハダオジくん">
         <img class="yuu" src="./public/yuu.png" alt="初心者案内役のゆう">
-        <div class="character-name name-left"><small>PRINT MASTER</small><b>ハダオジくん</b></div>
-        <div class="character-name name-right"><small>BEGINNER</small><b>ゆう</b></div>
+        <div class="character-name name-left"><small>ISLAND MASTER</small><b>ハダオジくん</b></div>
+        <div class="character-name name-right"><small>ADVENTURER</small><b>ゆう</b></div>
       </div>
       <div class="scroll">▼ SCROLL</div>
     </section>
 
-    <section class="ticker" aria-label="サイトの特徴"><span>★ 1枚からOK</span><span>★ 現場の知識</span><span>★ 初心者向け</span><span>★ デザイン相談</span></section>
+    <section class="ticker" aria-label="サイトの特徴"><span>🍌 1枚からOK</span><span>⭐ 現場の知識</span><span>🍍 初心者向け</span><span>🏝 デザイン相談</span></section>
 
     <section class="section quest" id="guide">
-      <div class="section-title"><p>QUEST 01</p><h2>まずはここから</h2><span>失敗しないTシャツづくりの基本</span></div>
+      <div class="section-title"><p>WORLD 1-1</p><h2>冒険のはじまり</h2><span>失敗しないTシャツづくりの基本装備</span></div>
       <div class="dialog-box">
         <div class="dialog-avatar"><img src="./public/hadaoji-kun.png" alt=""><span>店長</span></div>
         <div><p>「何から決めればいい？」という人は、4つのステップから始めよう。</p><div class="steps"><a href="#topics"><b>01</b><span>用途を決める</span></a><a href="#topics"><b>02</b><span>ボディを選ぶ</span></a><a href="#topics"><b>03</b><span>方法を比べる</span></a><a href="#topics"><b>04</b><span>データを用意</span></a></div></div>
@@ -47,12 +52,12 @@
     </section>
 
     <section class="section stages" id="topics">
-      <div class="section-title"><p>SELECT STAGE</p><h2>知りたいことから探す</h2><span>気になるステージを選んで攻略しよう</span></div>
+      <div class="section-title"><p>ISLAND MAP</p><h2>冒険する島を選ぶ</h2><span>知りたいテーマの島を選んで攻略しよう</span></div>
       <div class="stage-grid">
-        <article><span class="stage-no">STAGE 01</span><div class="pixel-icon">T</div><h3>プリント方法</h3><p>シルクスクリーン、DTF、インクジェットの違い。</p><a href="#articles">ENTER ▶</a></article>
-        <article><span class="stage-no">STAGE 02</span><div class="pixel-icon">↔</div><h3>サイズ・位置</h3><p>胸・背中・袖の見え方と適正サイズ。</p><a href="#articles">ENTER ▶</a></article>
-        <article><span class="stage-no">STAGE 03</span><div class="pixel-icon">◆</div><h3>デザイン入門</h3><p>CanvaやAI画像をプリントデータにするコツ。</p><a href="#articles">ENTER ▶</a></article>
-        <article><span class="stage-no">STAGE 04</span><div class="pixel-icon">▤</div><h3>ボディ比較</h3><p>定番Tシャツとドライ素材の違い。</p><a href="#articles">ENTER ▶</a></article>
+        <article><span class="stage-no">ISLAND 01</span><div class="pixel-icon">🌋</div><h3>プリント火山島</h3><p>シルクスクリーン、DTF、インクジェットの違い。</p><a href="#articles">LAND ▶</a></article>
+        <article><span class="stage-no">ISLAND 02</span><div class="pixel-icon">🏝</div><h3>サイズの砂浜</h3><p>胸・背中・袖の見え方と適正サイズ。</p><a href="#articles">LAND ▶</a></article>
+        <article><span class="stage-no">ISLAND 03</span><div class="pixel-icon">🌴</div><h3>デザインの森</h3><p>CanvaやAI画像をプリントデータにするコツ。</p><a href="#articles">LAND ▶</a></article>
+        <article><span class="stage-no">ISLAND 04</span><div class="pixel-icon">⛰</div><h3>ボディの山</h3><p>定番Tシャツとドライ素材の違い。</p><a href="#articles">LAND ▶</a></article>
       </div>
     </section>
 

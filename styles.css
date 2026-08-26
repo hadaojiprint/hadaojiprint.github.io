@@ -3,3 +3,32 @@
 @media(max-width:900px){.game-header nav{display:none}.hero{grid-template-columns:1fr;min-height:1050px;padding-top:60px}.characters{height:560px}.stage-grid{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:repeat(2,1fr)}.article-list{width:65%}.yuu-tip{width:37%}footer{grid-template-columns:1fr 1fr}footer>div{grid-column:1/-1}}
 @media(max-width:620px){.game-header{height:66px}.pixel-button.small{padding:9px 10px}.hero{min-height:900px;padding:40px 18px 50px}.hero h1{font-size:52px}.hero-actions{flex-direction:column;align-items:flex-start;gap:20px}.characters{height:410px;margin-top:20px}.hadaoji{width:56%;left:-2%}.yuu{width:54%;right:-4%}.speech{font-size:9px;padding:8px}.character-name{padding:5px}.ticker{justify-content:flex-start}.section{padding:70px 18px}.dialog-box{grid-template-columns:1fr;padding:20px;box-shadow:6px 6px var(--yellow)}.dialog-avatar{display:none}.dialog-box>div:last-child{padding:0}.steps{grid-template-columns:1fr 1fr}.stage-grid{grid-template-columns:1fr}.article-list{width:100%;padding-bottom:310px}.article-list article{grid-template-columns:58px 1fr 32px;padding:13px 10px}.article-list h3{font-size:11px}.article-list a{width:30px;height:30px}.yuu-tip{width:75%;height:330px;right:10%}.yuu-tip>div{width:90%;right:5%;bottom:4%}footer{grid-template-columns:1fr}footer>div{grid-column:1;flex-wrap:wrap}.scroll{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* PRINT ISLAND — original tropical 8-bit adventure theme */
+:root{--sky:#43c9ed;--sky2:#9aecff;--sea:#087bb7;--leaf:#159447;--leaf2:#55c934;--sand:#ffd76a;--wood:#814520;--wood2:#b96a2d}
+body{background:var(--sea)}
+body:before{background-image:linear-gradient(#ffffff0a 2px,transparent 2px),linear-gradient(90deg,#ffffff0a 2px,transparent 2px);background-size:16px 16px}
+.island-header{background:#142d24f2;border-bottom-color:#fff;box-shadow:0 5px #244d32}
+.island-header .logo-pixel{background:var(--sand);box-shadow:4px 0 var(--leaf2),0 4px var(--leaf2),-4px 0 var(--leaf2),0 -4px var(--leaf2)}
+.island-header .logo b,.island-header nav a:hover{color:var(--sand)}
+.island-hero{background:linear-gradient(var(--sky) 0 61%,var(--sky2) 61% 66%,var(--sea) 66% 74%,var(--sand) 74%);border-bottom:12px solid #6e3c1e;min-height:720px}
+.island-hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:80px;background:repeating-linear-gradient(90deg,#159447 0 24px,#55c934 24px 48px);clip-path:polygon(0 45%,4% 25%,8% 48%,12% 18%,16% 48%,20% 22%,24% 50%,28% 20%,32% 45%,36% 23%,40% 48%,44% 18%,48% 47%,52% 24%,56% 48%,60% 20%,64% 45%,68% 24%,72% 48%,76% 18%,80% 46%,84% 24%,88% 48%,92% 18%,96% 46%,100% 22%,100% 100%,0 100%);z-index:1}
+.hero-grid{background:radial-gradient(circle at 86% 12%,#fff78c 0 58px,#ffd93b 59px 78px,transparent 79px)}
+.hero-copy{background:#172a20e8;border:5px solid #fff;box-shadow:8px 8px #613719;padding:30px;max-width:610px}
+.hero h1{color:#fff;text-shadow:5px 5px #153927}.hero h1 em{color:var(--sand);text-shadow:5px 5px #8e4e1e}
+.status,.lead{color:#fff}.status span{color:var(--sand)}.sub-link{border-color:var(--sand)}
+.pixel-button{background:var(--sand);box-shadow:5px 0 var(--wood),0 5px var(--wood),-5px 0 #fff,0 -5px #fff}
+.pixel-button:hover{box-shadow:2px 0 var(--wood),0 2px var(--wood),-2px 0 #fff,0 -2px #fff}
+.characters{z-index:3}.characters:before{background:var(--sand);border-color:var(--wood);box-shadow:0 10px var(--wood2)}
+.character-name{background:var(--wood);border-color:var(--sand)}.character-name small{color:#fff}
+.speech{border-color:var(--wood);box-shadow:6px 6px var(--leaf)}.speech:after{border-color:var(--wood)}
+.pixel-cloud{position:absolute;width:105px;height:34px;background:#fff;box-shadow:22px -22px #fff,48px -10px #fff,82px 0 #fff;z-index:0;opacity:.9}.cloud-one{top:90px;left:6%}.cloud-two{top:160px;right:7%;transform:scale(.7)}
+.island-mountain{position:absolute;left:45%;bottom:24%;width:420px;height:260px;background:#168844;clip-path:polygon(50% 0,100% 100%,0 100%);opacity:.72}.island-mountain:after{content:"";position:absolute;inset:55px 70px 0;background:#36bc4f;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.palm{position:absolute;font-size:90px;z-index:2;filter:drop-shadow(7px 7px #315d25)}.palm-left{left:1%;bottom:40px;transform:rotate(-8deg)}.palm-right{right:1%;bottom:35px;transform:scaleX(-1) rotate(-8deg)}
+.ticker{background:var(--sand);border-bottom-color:var(--wood);color:#3d250f}
+.quest{background:#fff5c8}.dialog-box{border-color:var(--wood);box-shadow:10px 10px var(--leaf)}.dialog-avatar span{background:var(--wood);color:var(--sand)}.steps a{border-color:var(--wood)}.steps a:hover{background:var(--sand)}
+.stages{background:linear-gradient(#126e38,#083d28)}.stages .section-title p{background:var(--sand)}.stage-grid article{background:#fff1b6;color:#2d2718;border-color:var(--wood);box-shadow:7px 7px #052d1c}.stage-grid article:hover{border-color:#fff;transform:translateY(-7px)}.stage-no{color:#8b461e}.pixel-icon{background:var(--sky2);font-size:29px;box-shadow:4px 0 var(--wood),0 4px var(--wood)}.stage-grid p{color:#5d5034}.stage-grid a{color:#8b461e}
+.articles{background:linear-gradient(var(--sky) 0 33%,var(--sand) 33%);color:#281b0c}.section-title.light p{background:var(--wood);color:#fff}.section-title.light>span{color:#2f5260}.article-list article{border-color:var(--wood);box-shadow:7px 7px var(--leaf)}.article-list small,.article-list a{background:var(--wood);color:var(--sand)}
+.yuu-tip>div{background:var(--wood);border-color:#fff}.yuu-tip small{color:var(--sand)}
+footer{background:#132e25;border-top-color:var(--sand)}
+@media(max-width:620px){.island-hero{min-height:930px}.hero-copy{padding:20px}.pixel-cloud{transform:scale(.55)}.cloud-one{left:-5%}.cloud-two{transform:scale(.45)}.palm{font-size:58px}.island-mountain{left:15%;width:320px}.characters{z-index:4}}
