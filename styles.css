@@ -47,3 +47,6 @@ footer{background:#132e25;border-top-color:var(--sand)}
 
 /* Calm mode: decorative game effects removed */
 .retro-effects{display:none!important}.status span{animation:none!important}
+
+/* Status lamp blinking restored */
+.status span{animation:blink 1s steps(1) infinite!important}
