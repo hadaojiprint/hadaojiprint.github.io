@@ -13,6 +13,7 @@
   nav.innerHTML = [
     '<div class="quest-progress" aria-hidden="true"><span class="quest-progress-fill"></span></div>',
     '<div class="quest-copy" aria-live="polite"><small>ADVENTURE 00%</small><strong>NEXT STAGE</strong></div>',
+    '<button class="quest-sound" type="button" aria-label="効果音をオンにする" aria-pressed="false" title="SOUND OFF">♪</button>',
     '<button class="quest-next" type="button" aria-label="次のステージへ移動">▼</button>'
   ].join('');
   document.body.append(nav);
@@ -21,10 +22,64 @@
   const fill = nav.querySelector('.quest-progress-fill');
   const status = nav.querySelector('.quest-copy small');
   const label = nav.querySelector('.quest-copy strong');
+  const soundButton = nav.querySelector('.quest-sound');
   const button = nav.querySelector('.quest-next');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let soundOn = false;
+  try {
+    soundOn = localStorage.getItem('wearprint-sound') === 'on';
+  } catch {}
+  let audioContext;
+  let wasClear = false;
   let target = stages[0];
   let ticking = false;
+
+  const getAudio = () => {
+    if (!audioContext) {
+      const AudioEngine = window.AudioContext || window.webkitAudioContext;
+      if (!AudioEngine) return null;
+      audioContext = new AudioEngine();
+    }
+    return audioContext;
+  };
+
+  const tone = (frequency, duration = 0.06, delay = 0, volume = 0.025) => {
+    if (!soundOn) return;
+    const audio = getAudio();
+    if (!audio || audio.state !== 'running') return;
+    const start = audio.currentTime + delay;
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(frequency, start);
+    gain.gain.setValueAtTime(volume, start);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    oscillator.connect(gain).connect(audio.destination);
+    oscillator.start(start);
+    oscillator.stop(start + duration);
+  };
+
+  const playSelect = () => {
+    tone(520, 0.045, 0, 0.018);
+  };
+
+  const playStep = () => {
+    tone(440, 0.055, 0);
+    tone(660, 0.065, 0.055);
+  };
+
+  const playClear = () => {
+    tone(523, 0.08, 0);
+    tone(659, 0.08, 0.08);
+    tone(784, 0.14, 0.16);
+  };
+
+  const paintSoundButton = () => {
+    soundButton.classList.toggle('is-on', soundOn);
+    soundButton.setAttribute('aria-pressed', String(soundOn));
+    soundButton.setAttribute('aria-label', soundOn ? '効果音をオフにする' : '効果音をオンにする');
+    soundButton.title = soundOn ? 'SOUND ON' : 'SOUND OFF';
+  };
 
   const titleOf = stage => {
     const heading = stage.querySelector('h2');
@@ -52,13 +107,34 @@
     button.setAttribute('aria-label', clear ? 'ページ上部へ戻る' : '次のステージへ移動');
     nav.classList.toggle('is-clear', clear);
     nav.classList.toggle('is-visible', scrollY > 70 || innerWidth <= 760);
+    if (clear && !wasClear) playClear();
+    wasClear = clear;
     ticking = false;
   };
 
   button.addEventListener('click', () => {
+    playStep();
     const destination = nav.classList.contains('is-clear') ? document.body : target;
     destination?.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'start'});
   });
+
+  soundButton.addEventListener('click', async () => {
+    soundOn = !soundOn;
+    try {
+      localStorage.setItem('wearprint-sound', soundOn ? 'on' : 'off');
+    } catch {}
+    paintSoundButton();
+    if (soundOn) {
+      const audio = getAudio();
+      if (audio?.state === 'suspended') await audio.resume();
+      playStep();
+    }
+  });
+
+  document.addEventListener('pointerdown', event => {
+    const choice = event.target.closest('.article-list a,.stage-grid a,.steps a,.pixel-button');
+    if (choice && choice !== button && choice !== soundButton) playSelect();
+  }, {passive: true});
 
   addEventListener('scroll', () => {
     if (!ticking) {
@@ -67,5 +143,6 @@
     }
   }, {passive: true});
   addEventListener('resize', update, {passive: true});
+  paintSoundButton();
   update();
 })();
