@@ -38,9 +38,23 @@
     if (!audioContext) {
       const AudioEngine = window.AudioContext || window.webkitAudioContext;
       if (!AudioEngine) return null;
-      audioContext = new AudioEngine();
+      audioContext = new AudioEngine({latencyHint: 'interactive'});
     }
     return audioContext;
+  };
+
+  const unlockAudio = async () => {
+    if (!soundOn) return false;
+    const audio = getAudio();
+    if (!audio) return false;
+    if (audio.state !== 'running') {
+      try {
+        await audio.resume();
+      } catch {
+        return false;
+      }
+    }
+    return audio.state === 'running';
   };
 
   const tone = (frequency, duration = 0.06, delay = 0, volume = 0.025) => {
@@ -112,8 +126,8 @@
     ticking = false;
   };
 
-  button.addEventListener('click', () => {
-    playStep();
+  button.addEventListener('click', async () => {
+    if (await unlockAudio()) playStep();
     const destination = nav.classList.contains('is-clear') ? document.body : target;
     destination?.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'start'});
   });
@@ -125,15 +139,13 @@
     } catch {}
     paintSoundButton();
     if (soundOn) {
-      const audio = getAudio();
-      if (audio?.state === 'suspended') await audio.resume();
-      playStep();
+      if (await unlockAudio()) playStep();
     }
   });
 
-  document.addEventListener('pointerdown', event => {
+  document.addEventListener('pointerdown', async event => {
     const choice = event.target.closest('.article-list a,.stage-grid a,.steps a,.pixel-button');
-    if (choice && choice !== button && choice !== soundButton) playSelect();
+    if (choice && choice !== button && choice !== soundButton && await unlockAudio()) playSelect();
   }, {passive: true});
 
   addEventListener('scroll', () => {
