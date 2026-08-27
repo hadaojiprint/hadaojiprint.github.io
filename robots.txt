@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hadaojiprint.github.io/wearprint-lab/sitemap.xml
+Sitemap: https://hadaojiprint.github.io/sitemap.xml
