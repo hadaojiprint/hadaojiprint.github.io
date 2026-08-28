@@ -26,7 +26,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"ウェアプリントLAB","url":"https://hadaojiprint.github.io/","description":"オリジナルTシャツとウェアプリントを初心者向けに解説する情報サイト","inLanguage":"ja"},{"@type":"Organization","name":"株式会社ハダオジ","alternateName":"HADAOJI PRINT","url":"https://hadaojiprint.base.shop/","logo":"https://hadaojiprint.github.io/public/favicon.svg"}]}</script>
   <link rel="icon" href="./public/favicon.svg">
-  <link rel="stylesheet" href="./styles.css?v=20260827e">
+  <link rel="stylesheet" href="./styles.css?v=20260828c">
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6042145732175462" crossorigin="anonymous"></script>
 </head>
@@ -35,8 +35,20 @@
   <header class="game-header island-header">
     <a class="logo" href="#top"><span class="logo-pixel">W</span><span>WEAR PRINT<br><b>LAB</b></span></a>
     <nav aria-label="メインメニュー"><a href="#guide">GUIDE</a><a href="#topics">STAGE</a><a href="#articles">ARTICLE</a></nav>
-    <a class="pixel-button small" href="./estimate/">見積もり ▶</a>
+    <div class="header-actions"><a class="pixel-button small" href="./estimate/">見積もり ▶</a><button class="site-menu-toggle" type="button" aria-label="サイトメニューを開く" aria-expanded="false" aria-controls="site-menu"><span></span><span></span><span></span></button></div>
   </header>
+  <div class="site-menu-backdrop" data-menu-close hidden></div>
+  <aside class="site-menu" id="site-menu" aria-label="サイトメニュー" hidden>
+    <div class="site-menu-title"><div><small>PAUSE / SITE MENU</small><b>冒険メニュー</b></div><button type="button" data-menu-close aria-label="サイトメニューを閉じる">×</button></div>
+    <nav>
+      <a href="#top"><span>01</span><b>トップ</b><small>冒険島のスタート地点</small></a>
+      <a href="#guide"><span>02</span><b>初心者ガイド</b><small>Tシャツ作りの基本装備</small></a>
+      <a href="#topics"><span>03</span><b>島を選ぶ</b><small>テーマ別の攻略マップ</small></a>
+      <a href="#articles"><span>04</span><b>記事一覧</b><small>全10ミッションを読む</small></a>
+      <a class="menu-estimate" href="./estimate/"><span>GO</span><b>無料見積もり</b><small>分かる項目だけで相談OK</small></a>
+    </nav>
+    <div class="site-menu-sub"><a href="./about/">運営者情報</a><a href="./contact/">お問い合わせ</a><a href="./privacy/">プライバシー</a></div>
+  </aside>
 
   <main id="top">
     <section class="hero island-hero">
@@ -104,6 +116,6 @@
   </main>
 
   <footer><a class="logo" href="#top"><span class="logo-pixel">W</span><span>WEAR PRINT<br><b>LAB</b></span></a><p>オリジナルウェアづくりを、もっと楽しく、分かりやすく。</p><div><a href="./estimate/">無料見積もり</a><a href="./about/">運営者情報</a><a href="./privacy/">プライバシーポリシー</a><a href="./contact/">お問い合わせ</a></div><small>© 2026 WEAR PRINT LAB</small></footer>
-  <script src="./scroll-adventure.js?v=20260827b" defer></script>
+  <script src="./site-menu.js?v=20260828a" defer></script><script src="./scroll-adventure.js?v=20260827b" defer></script>
 </body>
 </html>
