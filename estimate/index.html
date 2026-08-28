@@ -24,7 +24,7 @@
   <meta property="og:image" content="https://hadaojiprint.github.io/public/wearprint-lab-hero.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="../public/favicon.svg">
-  <link rel="stylesheet" href="../styles.css?v=20260828d">
+  <link rel="stylesheet" href="../styles.css?v=20260828e">
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6042145732175462" crossorigin="anonymous"></script>
 </head>
@@ -38,7 +38,11 @@
   </section>
 
   <div class="estimate-main" id="order">
-    <form class="estimate-form" id="estimate-form">
+    <form class="estimate-form" id="estimate-form" action="https://formsubmit.co/hadaojiprint@gmail.com" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="_subject" id="form-subject" value="【ウェアプリントLAB】無料見積もり">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="https://hadaojiprint.github.io/estimate/thanks/">
+      <input class="form-honey" type="text" name="_honey" tabindex="-1" autocomplete="off">
       <div class="form-intro"><span>HOW TO PLAY</span><p><b>必須は5項目だけ。</b>送信ボタンを押すとメールが開きます。画像はメール画面で添付できます。</p></div>
 
       <fieldset><legend><b>STAGE 1</b> 作りたいもの</legend>
@@ -58,6 +62,7 @@
           <label><span>プリントの色数</span><select name="色数"><option>まだ分からない</option><option>1色</option><option>2色</option><option>3色以上</option><option>写真・フルカラー</option></select></label>
           <label><span>デザインの準備</span><select name="デザイン状況"><option>これから相談したい</option><option>手描き・ラフがある</option><option>画像データがある</option><option>完成データがある</option></select></label>
         </div>
+        <div class="upload-panel"><div class="upload-heading"><span>デザイン画像を添付</span><small>任意／最大2点・合計10MBまで</small></div><div class="upload-grid"><label class="file-choice"><input type="file" name="attachment" accept="image/jpeg,image/png,image/webp,application/pdf"><span><b>＋</b>画像1を選ぶ</span><small data-file-name>選択されていません</small></label><label class="file-choice"><input type="file" name="attachment2" accept="image/jpeg,image/png,image/webp,application/pdf"><span><b>＋</b>画像2を選ぶ</span><small data-file-name>選択されていません</small></label></div><p>JPG・PNG・WebP・PDFに対応。スマホで撮影した写真も選べます。</p></div>
       </fieldset>
 
       <fieldset><legend><b>STAGE 3</b> 納期と予算</legend>
@@ -72,13 +77,13 @@
         <div class="field-grid two">
           <label><span>お名前 <i>必須</i></span><input type="text" name="お名前" autocomplete="name" required></label>
           <label><span>会社・チーム名</span><input type="text" name="団体名" autocomplete="organization"></label>
-          <label><span>メールアドレス <i>必須</i></span><input type="email" name="メールアドレス" autocomplete="email" required></label>
+          <label><span>メールアドレス <i>必須</i></span><input type="email" name="email" autocomplete="email" required></label>
           <label><span>電話番号</span><input type="tel" name="電話番号" autocomplete="tel" inputmode="tel"></label>
         </div>
         <label class="privacy-check"><input type="checkbox" required><span><a href="../privacy/" target="_blank" rel="noopener">プライバシーポリシー</a>を確認し、入力内容の送信に同意します。</span></label>
       </fieldset>
 
-      <div class="send-panel"><p>入力内容をメール本文にまとめます</p><button class="estimate-submit" type="submit">▶ 見積もりメールを開く</button><button class="copy-estimate" id="copy-estimate" type="button">入力内容をコピー</button><small>画像データは、メール画面が開いてから添付してください。</small><div class="form-message" id="form-message" role="status" aria-live="polite"></div></div>
+      <div class="send-panel"><p>入力内容と添付画像をハダオジプリントへ送信します</p><button class="estimate-submit" type="submit">▶ 無料見積もりを送信</button><button class="copy-estimate" id="copy-estimate" type="button">入力内容をコピー</button><small>送信前に、入力内容と添付画像をご確認ください。</small><div class="form-message" id="form-message" role="status" aria-live="polite"></div></div>
       <section class="secret-command" aria-labelledby="secret-command-title"><div class="secret-code" aria-hidden="true"><span>HELP</span><span>＋</span><span>START</span></div><small>SECRET COMMAND / CONTINUE ROUTE</small><h2 id="secret-command-title">どうしてもクリアできない人へ</h2><p>入力が難しい、何を選べばいいか分からない。そんなときは公式LINEで、そのまま店長に相談できます。</p><a class="line-contact-link" href="https://lin.ee/YDuYZbM" target="_blank" rel="noopener"><b>LINE</b><span>公式LINEで問い合わせる</span><em>▶</em></a><small class="secret-note">画像を送りながら相談できます</small></section>
     </form>
 

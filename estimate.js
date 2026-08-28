@@ -28,10 +28,10 @@
     '',
     `■お名前：${read('お名前') || '未入力'}`,
     `■会社・チーム名：${read('団体名') || 'なし'}`,
-    `■メールアドレス：${read('メールアドレス') || '未入力'}`,
+    `■メールアドレス：${read('email') || '未入力'}`,
     `■電話番号：${read('電話番号') || 'なし'}`,
     '',
-    '※デザイン画像がある場合は、このメールに添付します。'
+    '※選択したデザイン画像は、フォームから一緒に送信されます。'
   ].join('\n');
 
   const updateSummary = () => {
@@ -43,18 +43,34 @@
   form.addEventListener('change', updateSummary);
 
   form.addEventListener('submit', (event) => {
-    event.preventDefault();
     if (!read('プリント位置')) {
+      event.preventDefault();
       message.textContent = 'プリント位置を1つ以上選んでください。未定でも大丈夫です。';
       form.querySelector('[name="プリント位置"]').focus();
       return;
     }
-    const subject = `【無料見積もり】${read('お名前')}様／${read('枚数')}枚`;
-    const mailto = `mailto:hadaojiprint@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildText())}`;
-    message.textContent = 'メール画面を開いています。画像があれば添付して送信してください。';
-    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: 'mail_open'});
-    window.location.href = mailto;
+    const files = Array.from(form.querySelectorAll('input[type="file"]')).flatMap((input) => Array.from(input.files || []));
+    const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+    if (totalSize > 10 * 1024 * 1024) {
+      event.preventDefault();
+      message.textContent = '添付画像の合計が10MBを超えています。画像を小さくするか、1点だけ選んでください。';
+      form.querySelector('input[type="file"]').focus();
+      return;
+    }
+    document.getElementById('form-subject').value = `【無料見積もり】${read('お名前')}様／${read('枚数')}枚`;
+    message.textContent = '入力内容と画像を送信しています…';
+    const submitButton = form.querySelector('.estimate-submit');
+    submitButton.disabled = true;
+    submitButton.textContent = '送信中…';
+    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: files.length ? 'form_with_image' : 'form'});
   });
+
+  form.querySelectorAll('input[type="file"]').forEach((input) => input.addEventListener('change', () => {
+    const file = input.files && input.files[0];
+    const label = input.closest('.file-choice').querySelector('[data-file-name]');
+    label.textContent = file ? `${file.name}（${(file.size / 1024 / 1024).toFixed(1)}MB）` : '選択されていません';
+    label.classList.toggle('has-file', Boolean(file));
+  }));
 
   copyButton.addEventListener('click', async () => {
     try {
@@ -64,7 +80,7 @@
       if (typeof gtag === 'function') gtag('event', 'estimate_copy', {event_category: 'estimate'});
       setTimeout(() => { copyButton.textContent = '入力内容をコピー'; }, 2200);
     } catch (error) {
-      message.textContent = 'コピーできませんでした。「見積もりメールを開く」をご利用ください。';
+      message.textContent = 'コピーできませんでした。「無料見積もりを送信」をご利用ください。';
     }
   });
 
