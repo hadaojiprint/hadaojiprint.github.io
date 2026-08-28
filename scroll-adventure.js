@@ -144,9 +144,13 @@
   });
 
   document.addEventListener('pointerdown', async event => {
-    const choice = event.target.closest('.article-list a,.stage-grid a,.steps a,.pixel-button');
+    const choice = event.target.closest('.article-list a,.stage-grid a,.steps a,.pixel-button,.secret-route-link');
     if (choice && choice !== button && choice !== soundButton && await unlockAudio()) playSelect();
   }, {passive: true});
+
+  document.querySelectorAll('.secret-route-link').forEach(link => link.addEventListener('click', () => {
+    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'secret_route', event_label: 'official_line'});
+  }));
 
   addEventListener('scroll', () => {
     if (!ticking) {
