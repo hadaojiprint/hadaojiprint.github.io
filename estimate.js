@@ -3,6 +3,7 @@
   const copyButton = document.getElementById('copy-estimate');
   const message = document.getElementById('form-message');
   const summary = document.getElementById('estimate-summary');
+  const printPositionValue = document.getElementById('print-position-value');
   if (!form) return;
 
   const read = (name) => {
@@ -12,6 +13,16 @@
     return fields[0].value.trim();
   };
 
+  const readPrintPositions = () => Array.from(form.querySelectorAll('[data-print-position]:checked'))
+    .map((field) => field.value)
+    .join('、');
+
+  const syncPrintPositions = () => {
+    const positions = readPrintPositions();
+    printPositionValue.value = positions;
+    return positions;
+  };
+
   const buildText = () => [
     '【ウェアプリント無料見積もり】',
     '',
@@ -19,7 +30,7 @@
     `■ウェア：${read('ウェア') || '未入力'}`,
     `■予定枚数：${read('枚数') ? read('枚数') + '枚' : '未入力'}`,
     `■ウェアの色：${read('ウェアの色') || '未定'}`,
-    `■プリント位置：${read('プリント位置') || '未定'}`,
+    `■プリント位置：${syncPrintPositions() || '未定'}`,
     `■プリントの色数：${read('色数') || '未定'}`,
     `■デザイン状況：${read('デザイン状況') || '未定'}`,
     `■希望納期：${read('希望納期') || '未定'}`,
@@ -35,7 +46,7 @@
   ].join('\n');
 
   const updateSummary = () => {
-    const values = [read('用途'), read('ウェア'), read('枚数') ? `${read('枚数')}枚` : '', read('プリント位置'), read('希望納期')];
+    const values = [read('用途'), read('ウェア'), read('枚数') ? `${read('枚数')}枚` : '', syncPrintPositions(), read('希望納期')];
     summary.querySelectorAll('dd').forEach((item, index) => { item.textContent = values[index] || (index === 2 || index === 4 ? '未入力' : '未選択'); });
   };
 
@@ -43,10 +54,10 @@
   form.addEventListener('change', updateSummary);
 
   form.addEventListener('submit', (event) => {
-    if (!read('プリント位置')) {
+    if (!syncPrintPositions()) {
       event.preventDefault();
       message.textContent = 'プリント位置を1つ以上選んでください。未定でも大丈夫です。';
-      form.querySelector('[name="プリント位置"]').focus();
+      form.querySelector('[data-print-position]').focus();
       return;
     }
     const files = Array.from(form.querySelectorAll('input[type="file"]')).flatMap((input) => Array.from(input.files || []));
