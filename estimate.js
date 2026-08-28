@@ -4,7 +4,16 @@
   const message = document.getElementById('form-message');
   const summary = document.getElementById('estimate-summary');
   const printPositionValue = document.getElementById('print-position-value');
+  const submitButton = form?.querySelector('.estimate-submit');
   if (!form) return;
+
+  const resetSubmit = () => {
+    if (!submitButton) return;
+    submitButton.disabled = false;
+    submitButton.textContent = '▶ 無料見積もりを送信';
+  };
+
+  addEventListener('pageshow', resetSubmit);
 
   const read = (name) => {
     const fields = Array.from(form.querySelectorAll(`[name="${name}"]`));
@@ -70,9 +79,13 @@
     }
     document.getElementById('form-subject').value = `【無料見積もり】${read('お名前')}様／${read('枚数')}枚`;
     message.textContent = '入力内容と画像を送信しています…';
-    const submitButton = form.querySelector('.estimate-submit');
     submitButton.disabled = true;
     submitButton.textContent = '送信中…';
+    setTimeout(() => {
+      if (document.visibilityState !== 'visible' || !submitButton.disabled) return;
+      resetSubmit();
+      message.textContent = '送信画面へ移動できませんでした。通信状態を確認して、もう一度送信してください。';
+    }, 15000);
     if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: files.length ? 'form_with_image' : 'form'});
   });
 
