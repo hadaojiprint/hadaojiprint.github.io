@@ -17,6 +17,9 @@
   toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
   document.querySelectorAll('[data-menu-close]').forEach((button) => button.addEventListener('click', () => setOpen(false)));
   menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+  menu.querySelectorAll('.line-contact-link').forEach((link) => link.addEventListener('click', () => {
+    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'site_menu', event_label: 'official_line'});
+  }));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') setOpen(false);
   });

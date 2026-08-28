@@ -68,5 +68,9 @@
     }
   });
 
+  document.querySelectorAll('.line-contact-link').forEach((link) => link.addEventListener('click', () => {
+    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: 'official_line'});
+  }));
+
   updateSummary();
 })();
