@@ -78,12 +78,26 @@
       return;
     }
 
-    event.preventDefault();
     document.getElementById('form-subject').value = `【無料見積もり】${read('お名前')}様／${read('枚数')}枚`;
+    const nextField = form.querySelector('[name="_next"]');
+    if (nextField) nextField.value = new URL('./thanks/', location.href).href;
     message.textContent = '入力内容と画像を送信しています…';
     submitButton.disabled = true;
     submitButton.textContent = '送信中…';
     if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: files.length ? 'form_with_image' : 'form'});
+
+    // FormSubmitのファイル添付は、multipart/form-dataの通常送信で処理する。
+    // 画像がある場合はブラウザ標準のフォーム送信へ任せる。
+    if (files.length) {
+      setTimeout(() => {
+        if (document.visibilityState !== 'visible' || !submitButton.disabled) return;
+        resetSubmit();
+        message.textContent = '送信画面へ移動できませんでした。通信状態を確認して、もう一度送信してください。';
+      }, 60000);
+      return;
+    }
+
+    event.preventDefault();
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 60000);
