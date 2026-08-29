@@ -4,7 +4,9 @@
   const message = document.getElementById('form-message');
   const summary = document.getElementById('estimate-summary');
   const printPositionValue = document.getElementById('print-position-value');
+  const submitFrame = document.getElementById('estimate-submit-frame');
   const submitButton = form?.querySelector('.estimate-submit');
+  let awaitingResponse = false;
   if (!form) return;
 
   const resetSubmit = () => {
@@ -12,6 +14,26 @@
     submitButton.disabled = false;
     submitButton.textContent = '▶ 無料見積もりを送信';
   };
+
+  const removeEncodedFiles = () => {
+    form.querySelectorAll('[data-encoded-file]').forEach((field) => field.remove());
+  };
+
+  const addHiddenField = (name, value) => {
+    const field = document.createElement('input');
+    field.type = 'hidden';
+    field.name = name;
+    field.value = value;
+    field.dataset.encodedFile = 'true';
+    form.appendChild(field);
+  };
+
+  const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+    reader.onerror = () => reject(reader.error || new Error('ファイルを読み込めませんでした。'));
+    reader.readAsDataURL(file);
+  });
 
   addEventListener('pageshow', resetSubmit);
 
@@ -62,9 +84,9 @@
   form.addEventListener('input', updateSummary);
   form.addEventListener('change', updateSummary);
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
     if (!syncPrintPositions()) {
-      event.preventDefault();
       message.textContent = 'プリント位置を1つ以上選んでください。未定でも大丈夫です。';
       form.querySelector('[data-print-position]').focus();
       return;
@@ -72,24 +94,50 @@
     const files = Array.from(form.querySelectorAll('input[type="file"]')).flatMap((input) => Array.from(input.files || []));
     const totalSize = files.reduce((sum, file) => sum + file.size, 0);
     if (totalSize > 10 * 1024 * 1024) {
-      event.preventDefault();
       message.textContent = '添付画像の合計が10MBを超えています。画像を小さくするか、1点だけ選んでください。';
       form.querySelector('input[type="file"]').focus();
       return;
     }
 
-    message.textContent = '入力内容と画像を送信しています…';
+    message.textContent = files.length ? '画像を準備して送信しています…' : '入力内容を送信しています…';
     submitButton.disabled = true;
     submitButton.textContent = '送信中…';
-    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: files.length ? 'form_with_image' : 'form'});
+    removeEncodedFiles();
 
-    // Google Apps Scriptへmultipart/form-dataで通常送信する。
-    // 成功後はApps Script側からサイト専用の完了画面へ戻る。
-    setTimeout(() => {
-      if (document.visibilityState !== 'visible' || !submitButton.disabled) return;
+    try {
+      for (const input of form.querySelectorAll('input[type="file"]')) {
+        const file = input.files && input.files[0];
+        if (!file) continue;
+        const key = input.name === 'attachment2' ? 'attachment2' : 'attachment';
+        addHiddenField(`${key}_data`, await readFileAsBase64(file));
+        addHiddenField(`${key}_name`, file.name);
+        addHiddenField(`${key}_type`, file.type || 'application/octet-stream');
+      }
+    } catch (error) {
       resetSubmit();
+      removeEncodedFiles();
+      message.textContent = '画像を読み込めませんでした。画像を選び直して、もう一度送信してください。';
+      return;
+    }
+
+    awaitingResponse = true;
+    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: files.length ? 'form_with_image' : 'form'});
+    form.submit();
+
+    setTimeout(() => {
+      if (!awaitingResponse) return;
+      awaitingResponse = false;
+      resetSubmit();
+      removeEncodedFiles();
       message.textContent = '送信画面へ移動できませんでした。通信状態を確認して、もう一度送信してください。';
     }, 60000);
+  });
+
+  submitFrame?.addEventListener('load', () => {
+    if (!awaitingResponse) return;
+    awaitingResponse = false;
+    removeEncodedFiles();
+    location.assign(new URL('./thanks/', location.href).href);
   });
 
   form.querySelectorAll('input[type="file"]').forEach((input) => input.addEventListener('change', () => {
