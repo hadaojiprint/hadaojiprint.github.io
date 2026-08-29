@@ -30,6 +30,7 @@
   const CLEAR_KEY = 'wearprint-coin-clears';
   const ARTICLE_CLEAR_KEY = 'wearprint-article-clears';
   const TREASURE_KEY = 'wearprint-treasures-v1';
+  const MASTER_KEY = 'wearprint-master-signature';
   const path = location.pathname.replace(/index\.html$/, '');
   let articlePaths = [
     '/articles/one-shirt/',
@@ -58,6 +59,7 @@
   let cleared = {};
   let articleClears = {};
   let treasures = {};
+  let awardedMasterSignature = '';
   try {
     const savedCoins = Number(localStorage.getItem(COIN_KEY));
     if (Number.isFinite(savedCoins) && savedCoins >= 0) coins = savedCoins;
@@ -65,6 +67,7 @@
     cleared = JSON.parse(localStorage.getItem(CLEAR_KEY) || '{}') || {};
     articleClears = JSON.parse(localStorage.getItem(ARTICLE_CLEAR_KEY) || '{}') || {};
     treasures = JSON.parse(localStorage.getItem(TREASURE_KEY) || '{}') || {};
+    awardedMasterSignature = localStorage.getItem(MASTER_KEY) || '';
   } catch {}
 
   const coinStyle = document.createElement('style');
@@ -93,7 +96,13 @@
     .transition-dots:after{content:"";animation:loading-dots .6s steps(3,end) infinite}
     @keyframes loading-dots{0%{content:""}33%{content:"."}66%{content:".."}100%{content:"..."}}
     .adventure-book{position:fixed;left:14px;bottom:18px;z-index:27;background:#172a20;color:#fff;border:3px solid #ffd76a;box-shadow:4px 4px #814520;padding:9px 11px;font:900 10px/1.35 "Courier New",monospace;letter-spacing:.03em;pointer-events:none}
-    .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}
+    .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}.adventure-book em{display:block;margin-top:4px;color:#fff36a;font-style:normal;font-size:8px}.adventure-book.is-master{border-color:#fff36a;box-shadow:4px 4px #814520,0 0 0 3px #fff}.adventure-book.is-master em{color:#8affb8;font-size:9px}
+    .master-overlay{position:fixed;inset:0;z-index:140;display:grid;place-items:center;padding:20px;background:#000b;opacity:0;visibility:hidden;transition:opacity .16s steps(2,end);pointer-events:none}
+    .master-overlay.is-show{opacity:1;visibility:visible}
+    .master-card{width:min(90vw,470px);background:#10241b;color:#fff;border:6px solid #ffd400;box-shadow:10px 10px #814520;padding:28px 22px;text-align:center;font-family:"Courier New",monospace;transform:scale(.72);transition:transform .42s steps(6,end)}
+    .master-overlay.is-show .master-card{transform:scale(1)}
+    .master-card small{display:block;color:#8affb8;font-size:10px;letter-spacing:.16em}.master-card strong{display:block;margin:12px 0 8px;color:#fff36a;font-size:clamp(28px,7vw,48px);line-height:1;text-shadow:4px 4px #814520}.master-card b{display:inline-block;margin-top:12px;background:#ffd400;color:#111;padding:8px 12px;font-size:11px}.master-stars{display:block;color:#ffd400;font-size:20px;letter-spacing:.25em;animation:master-flash .6s steps(2,end) infinite}
+    @keyframes master-flash{50%{color:#fff;transform:scale(1.08)}}
     .article-clear-badge{display:inline-block;margin-left:8px;padding:3px 6px;background:#172a20;color:#ffd76a;border:2px solid #814520;font:900 9px/1 "Courier New",monospace;vertical-align:middle}
     .article-list article.is-cleared{outline:4px solid #159447;outline-offset:-4px}.article-list article.is-cleared .level{color:#0a6d36}.article-list article.is-cleared a{background:#159447;color:#fff}
     .scroll-walker{position:fixed;right:22px;bottom:82px;z-index:108;width:94px;height:141px;padding:0;border:0;background:transparent;cursor:pointer;transform-origin:center bottom;-webkit-tap-highlight-color:transparent}
@@ -111,8 +120,8 @@
     @keyframes walker-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
     @keyframes walker-jump{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-28px) scale(1.04)}70%{transform:translateY(-9px) scale(.98)}}
     @keyframes walker-double-jump{0%,100%{transform:translateY(0)}20%,65%{transform:translateY(-24px) rotate(-3deg)}38%,82%{transform:translateY(0) rotate(3deg)}}
-    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}.treasure-card{padding:16px 14px}.treasure-sprite{width:112px;height:112px}.treasure-card strong{font-size:18px}}
-    @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}.page-transition{transition:none!important}.transition-dots:after{animation:none;content:"..."}}
+    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}.treasure-card{padding:16px 14px}.treasure-sprite{width:112px;height:112px}.treasure-card strong{font-size:18px}.master-card{padding:22px 14px}.master-card strong{font-size:30px}}
+    @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}.page-transition{transition:none!important}.transition-dots:after{animation:none;content:"..."}.master-stars{animation:none}}
   `;
   document.head.append(coinStyle);
 
@@ -191,12 +200,30 @@
     treasureTimer = setTimeout(() => treasureOverlay.classList.remove('is-show', 'is-open'), 2600);
   };
 
+  const masterOverlay = document.createElement('div');
+  masterOverlay.className = 'master-overlay';
+  masterOverlay.setAttribute('role', 'status');
+  masterOverlay.setAttribute('aria-live', 'polite');
+  masterOverlay.innerHTML = '<div class="master-card"><span class="master-stars">★ ★ ★</span><small>ALL ARTICLES CLEAR!</small><strong>PRINT MASTER</strong><p>すべてのプリント知識を獲得しました</p><b>称号を獲得！</b></div>';
+  document.body.append(masterOverlay);
+  let masterTimer;
+  const showMasterAward = () => {
+    clearTimeout(masterTimer);
+    masterOverlay.classList.remove('is-show');
+    void masterOverlay.offsetWidth;
+    masterOverlay.classList.add('is-show');
+    playWalkerReaction('is-coin', 1400);
+    masterTimer = setTimeout(() => masterOverlay.classList.remove('is-show'), 3600);
+  };
+
   const adventureBook = document.createElement('div');
   adventureBook.className = 'adventure-book';
   adventureBook.setAttribute('aria-live', 'polite');
   document.body.append(adventureBook);
 
+  let articleRosterReady = false;
   const countArticleClears = () => articlePaths.filter(articlePath => articleClears[articlePath]).length;
+  const rosterSignature = () => articlePaths.slice().sort().join('|');
 
   const refreshArticlePaths = async () => {
     try {
@@ -211,16 +238,35 @@
         })
         .filter(p => p.startsWith('/articles/'));
       const unique = [...new Set(discovered)];
-      if (unique.length) {
-        articlePaths = unique;
-        paintAdventureBook();
-      }
+      if (unique.length) articlePaths = unique;
     } catch {}
+    articleRosterReady = true;
+    paintAdventureBook();
   };
 
   const paintAdventureBook = () => {
     const count = countArticleClears();
-    adventureBook.innerHTML = `<small>冒険の書</small><b>CLEAR ${String(count).padStart(2, '0')} / ${articlePaths.length}</b>`;
+    const total = articlePaths.length;
+    const remaining = Math.max(0, total - count);
+    const signature = rosterSignature();
+    const isMaster = articleRosterReady && total > 0 && remaining === 0;
+    const hadMaster = Boolean(awardedMasterSignature);
+    adventureBook.classList.toggle('is-master', isMaster);
+    const status = isMaster
+      ? 'PRINT MASTER'
+      : hadMaster
+        ? `NEW QUEST! あと${remaining}記事`
+        : `PRINT MASTERまで あと${remaining}記事`;
+    adventureBook.innerHTML = `<small>冒険の書</small><b>CLEAR ${String(count).padStart(2, '0')} / ${total}</b><em>${status}</em>`;
+
+    if (isMaster && awardedMasterSignature !== signature) {
+      awardedMasterSignature = signature;
+      try { localStorage.setItem(MASTER_KEY, signature); } catch {}
+      setTimeout(showMasterAward, 260);
+      if (typeof gtag === 'function') {
+        gtag('event', 'print_master', {cleared_articles: count, article_total: total});
+      }
+    }
 
     document.querySelectorAll('.article-list article').forEach(card => {
       const link = card.querySelector('a[href*="/articles/"]');
