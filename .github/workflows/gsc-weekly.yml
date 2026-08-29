@@ -1,4 +1,4 @@
-name: Weekly Search Console Report
+name: Weekly Search Console + GA4 Report
 
 on:
   workflow_dispatch:
@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/gsc-weekly.yml'
       - 'scripts/gsc_fetch.py'
+      - 'scripts/ga4_fetch.py'
   schedule:
     # Monday 07:30 JST = Sunday 22:30 UTC
     - cron: '30 22 * * 0'
@@ -17,7 +18,7 @@ permissions:
   id-token: write
 
 jobs:
-  gsc-report:
+  analytics-report:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,16 +36,28 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install google-api-python-client google-auth
+        run: pip install google-api-python-client google-auth google-analytics-data
 
       - name: Fetch Search Console data
         env:
           GSC_SITE_URL: https://hadaojiprint.github.io/
         run: python scripts/gsc_fetch.py
 
+      - name: Fetch GA4 data
+        env:
+          GA4_PROPERTY_ID: '551862318'
+        run: python scripts/ga4_fetch.py
+
       - name: Upload SEO report
         uses: actions/upload-artifact@v4
         with:
           name: gsc-report-${{ github.run_number }}
           path: gsc-report/
+          retention-days: 30
+
+      - name: Upload GA4 report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ga4-report-${{ github.run_number }}
+          path: ga4-report/
           retention-days: 30
