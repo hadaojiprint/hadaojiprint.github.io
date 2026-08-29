@@ -62,7 +62,7 @@
   form.addEventListener('input', updateSummary);
   form.addEventListener('change', updateSummary);
 
-  form.addEventListener('submit', async (event) => {
+  form.addEventListener('submit', (event) => {
     if (!syncPrintPositions()) {
       event.preventDefault();
       message.textContent = 'プリント位置を1つ以上選んでください。未定でも大丈夫です。';
@@ -78,51 +78,18 @@
       return;
     }
 
-    document.getElementById('form-subject').value = `【無料見積もり】${read('お名前')}様／${read('枚数')}枚`;
-    const nextField = form.querySelector('[name="_next"]');
-    if (nextField) nextField.value = new URL('./thanks/', location.href).href;
     message.textContent = '入力内容と画像を送信しています…';
     submitButton.disabled = true;
     submitButton.textContent = '送信中…';
     if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'estimate', event_label: files.length ? 'form_with_image' : 'form'});
 
-    // FormSubmitのファイル添付は、multipart/form-dataの通常送信で処理する。
-    // 画像がある場合はブラウザ標準のフォーム送信へ任せる。
-    if (files.length) {
-      setTimeout(() => {
-        if (document.visibilityState !== 'visible' || !submitButton.disabled) return;
-        resetSubmit();
-        message.textContent = '送信画面へ移動できませんでした。通信状態を確認して、もう一度送信してください。';
-      }, 60000);
-      return;
-    }
-
-    event.preventDefault();
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 60000);
-
-    try {
-      const endpoint = form.action.replace('https://formsubmit.co/', 'https://formsubmit.co/ajax/');
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: {Accept: 'application/json'},
-        signal: controller.signal
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result.success === false || result.success === 'false') {
-        throw new Error(result.message || '送信に失敗しました');
-      }
-      location.assign(new URL('./thanks/', location.href).href);
-    } catch (error) {
+    // Google Apps Scriptへmultipart/form-dataで通常送信する。
+    // 成功後はApps Script側からサイト専用の完了画面へ戻る。
+    setTimeout(() => {
+      if (document.visibilityState !== 'visible' || !submitButton.disabled) return;
       resetSubmit();
-      message.textContent = error.name === 'AbortError'
-        ? '送信に時間がかかっています。通信状態を確認し、画像を小さくしてもう一度お試しください。'
-        : '送信できませんでした。通信状態を確認して、もう一度送信してください。';
-    } finally {
-      clearTimeout(timeout);
-    }
+      message.textContent = '送信画面へ移動できませんでした。通信状態を確認して、もう一度送信してください。';
+    }, 60000);
   });
 
   form.querySelectorAll('input[type="file"]').forEach((input) => input.addEventListener('change', () => {
