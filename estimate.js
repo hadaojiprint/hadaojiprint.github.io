@@ -137,7 +137,32 @@
     if (!awaitingResponse) return;
     awaitingResponse = false;
     removeEncodedFiles();
-    location.assign(new URL('./thanks/', location.href).href);
+
+    const redirectToThanks = () => {
+      location.assign(new URL('./thanks/', location.href).href);
+    };
+
+    if (typeof gtag !== 'function') {
+      redirectToThanks();
+      return;
+    }
+
+    let hasRedirected = false;
+    const redirectOnce = () => {
+      if (hasRedirected) return;
+      hasRedirected = true;
+      redirectToThanks();
+    };
+
+    gtag('event', 'form_submit', {
+      event_category: 'estimate',
+      event_label: 'estimate_form_success',
+      transport_type: 'beacon',
+      event_callback: redirectOnce,
+      event_timeout: 1500
+    });
+
+    setTimeout(redirectOnce, 1800);
   });
 
   form.querySelectorAll('input[type="file"]').forEach((input) => input.addEventListener('change', () => {
