@@ -1,0 +1,38 @@
+name: Weekly Search Console Report
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Monday 07:30 JST = Sunday 22:30 UTC
+    - cron: '30 22 * * 0'
+
+permissions:
+  contents: read
+
+jobs:
+  gsc-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install google-api-python-client google-auth
+
+      - name: Fetch Search Console data
+        env:
+          GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+        run: python scripts/gsc_fetch.py
+
+      - name: Upload SEO report
+        uses: actions/upload-artifact@v4
+        with:
+          name: gsc-report-${{ github.run_number }}
+          path: gsc-report/
+          retention-days: 30
