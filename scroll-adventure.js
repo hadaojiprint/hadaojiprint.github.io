@@ -74,12 +74,23 @@
     .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}
     .article-clear-badge{display:inline-block;margin-left:8px;padding:3px 6px;background:#172a20;color:#ffd76a;border:2px solid #814520;font:900 9px/1 "Courier New",monospace;vertical-align:middle}
     .article-list article.is-cleared{outline:4px solid #159447;outline-offset:-4px}.article-list article.is-cleared .level{color:#0a6d36}.article-list article.is-cleared a{background:#159447;color:#fff}
-    .scroll-walker{position:fixed;right:22px;bottom:82px;z-index:108;width:92px;height:128px;padding:0;border:0;background:transparent;cursor:pointer;animation:walker-step .32s steps(2,end) infinite;animation-play-state:paused;transform-origin:center bottom;-webkit-tap-highlight-color:transparent}
-    .scroll-walker img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;image-rendering:pixelated}
+    .scroll-walker{position:fixed;right:22px;bottom:82px;z-index:108;width:94px;height:141px;padding:0;border:0;background:transparent;cursor:pointer;transform-origin:center bottom;-webkit-tap-highlight-color:transparent}
+    .walker-sprite{display:block;width:100%;height:100%;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;image-rendering:pixelated}
     .scroll-walker:focus-visible{outline:4px solid #ffd400;outline-offset:4px}
-    @keyframes walker-step{0%{transform:translateY(0) rotate(-2deg) scaleY(1)}50%{transform:translateY(-6px) rotate(2deg) scaleY(.98)}100%{transform:translateY(0) rotate(-2deg) scaleY(1)}}
-    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:94px}}
-    @media(prefers-reduced-motion:reduce){.scroll-walker{animation:none;transition:none}}
+    .scroll-walker.is-walking{animation:walker-bob .34s steps(2,end) infinite}
+    .scroll-walker.is-walking .walker-sprite{animation:walker-feet .34s steps(1,end) infinite}
+    .scroll-walker.is-victory{animation:none}
+    .scroll-walker.is-victory .walker-sprite{animation:none;background-position:100% 0}
+    .scroll-walker.is-jumping{animation:walker-jump .52s steps(6,end)}
+    .scroll-walker.is-jumping .walker-sprite{animation:none;background-position:50% 0}
+    .scroll-walker.is-coin{animation:walker-double-jump .9s steps(9,end)}
+    .scroll-walker.is-coin .walker-sprite{animation:none;background-position:75% 0}
+    @keyframes walker-feet{0%,49%{background-position:0 0}50%,100%{background-position:25% 0}}
+    @keyframes walker-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    @keyframes walker-jump{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-28px) scale(1.04)}70%{transform:translateY(-9px) scale(.98)}}
+    @keyframes walker-double-jump{0%,100%{transform:translateY(0)}20%,65%{transform:translateY(-24px) rotate(-3deg)}38%,82%{transform:translateY(0) rotate(3deg)}}
+    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}}
+    @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}}
   `;
   document.head.append(coinStyle);
 
@@ -90,8 +101,8 @@
 
   const CHARACTER_KEY = 'wearprint-walker-character';
   const characters = {
-    hadaoji: {src: '/public/hadaoji-kun-marching-v2.png', name: 'ハダオジくん'},
-    yuu: {src: '/public/yuu-chan-marching-v2.png', name: 'ゆうちゃん'}
+    hadaoji: {src: '/public/hadaoji-actions-v1.png', name: 'ハダオジくん'},
+    yuu: {src: '/public/yuu-actions-v1.png', name: 'ゆうちゃん'}
   };
   let activeCharacter = 'hadaoji';
   try {
@@ -102,14 +113,21 @@
   const walker = document.createElement('button');
   walker.className = 'scroll-walker';
   walker.type = 'button';
-  walker.innerHTML = '<img alt="">';
-  const walkerImage = walker.querySelector('img');
+  walker.innerHTML = '<span class="walker-sprite" aria-hidden="true"></span>';
+  const walkerSprite = walker.querySelector('.walker-sprite');
   const paintWalker = () => {
     const character = characters[activeCharacter];
-    walkerImage.src = character.src;
-    walkerImage.alt = character.name;
+    walkerSprite.style.backgroundImage = `url("${character.src}")`;
     walker.setAttribute('aria-label', character.name + 'をクリックしてキャラクターを切り替える');
     walker.title = character.name + ' / CLICK CHANGE';
+  };
+  let reactionTimer;
+  const playWalkerReaction = (className, duration) => {
+    clearTimeout(reactionTimer);
+    walker.classList.remove('is-jumping', 'is-coin');
+    void walker.offsetWidth;
+    walker.classList.add(className);
+    reactionTimer = setTimeout(() => walker.classList.remove(className), duration);
   };
   paintWalker();
   document.body.append(walker);
@@ -268,6 +286,7 @@
     } catch {}
     paintCoins();
     showCoinToast(reward.label);
+    playWalkerReaction('is-coin', 900);
     playCoin();
     if (typeof gtag === 'function') {
       gtag('event', 'coin_earned', {coin_total: coins, reward_type: reward.label, page_path: path});
@@ -310,6 +329,7 @@
     button.setAttribute('aria-label', clear ? 'ページ上部へ戻る' : '次のステージへ移動');
     nav.classList.toggle('is-clear', clear);
     nav.classList.toggle('is-visible', scrollY > 70 || innerWidth <= 760);
+    walker.classList.toggle('is-victory', clear);
     if (clear && !wasClear) playClear();
     wasClear = clear;
     ticking = false;
@@ -342,21 +362,20 @@
   }));
 
   walker.addEventListener('click', async () => {
-    activeCharacter = activeCharacter === 'hadaoji' ? 'yuu' : 'hadaoji';
-    try { localStorage.setItem(CHARACTER_KEY, activeCharacter); } catch {}
-    paintWalker();
-    walker.animate(
-      [{transform:'scale(.82)',opacity:.45},{transform:'scale(1.08)',opacity:1},{transform:'scale(1)',opacity:1}],
-      {duration:240,easing:'steps(3,end)'}
-    );
+    playWalkerReaction('is-jumping', 520);
+    setTimeout(() => {
+      activeCharacter = activeCharacter === 'hadaoji' ? 'yuu' : 'hadaoji';
+      try { localStorage.setItem(CHARACTER_KEY, activeCharacter); } catch {}
+      paintWalker();
+    }, 210);
     if (await unlockAudio()) playSelect();
   });
 
   let walkTimer;
   addEventListener('scroll', () => {
-    walker.style.animationPlayState = 'running';
+    walker.classList.add('is-walking');
     clearTimeout(walkTimer);
-    walkTimer = setTimeout(() => { walker.style.animationPlayState = 'paused'; }, 140);
+    walkTimer = setTimeout(() => walker.classList.remove('is-walking'), 140);
     if (!ticking) {
       requestAnimationFrame(update);
       ticking = true;
