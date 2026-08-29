@@ -30,7 +30,7 @@
   const CLEAR_KEY = 'wearprint-coin-clears';
   const ARTICLE_CLEAR_KEY = 'wearprint-article-clears';
   const path = location.pathname.replace(/index\.html$/, '');
-  const articlePaths = [
+  let articlePaths = [
     '/articles/one-shirt/',
     '/articles/dtf-vs-silk/',
     '/articles/thirty-shirts-price/',
@@ -70,6 +70,17 @@
     .coin-toast{position:fixed;left:50%;top:18%;z-index:120;transform:translate(-50%,-20px);opacity:0;background:#172a20;color:#fff;border:4px solid #ffd76a;box-shadow:7px 7px #814520;padding:15px 20px;text-align:center;font:900 12px/1.5 "Courier New",monospace;transition:.18s;pointer-events:none}
     .coin-toast b{display:block;color:#ffd76a;font-size:19px;margin-top:3px}
     .coin-toast.is-show{opacity:1;transform:translate(-50%,0)}
+    .treasure-overlay{position:fixed;inset:0;z-index:135;display:grid;place-items:center;padding:20px;background:#0009;opacity:0;visibility:hidden;transition:opacity .16s steps(2,end);pointer-events:none}
+    .treasure-overlay.is-show{opacity:1;visibility:visible}
+    .treasure-card{width:min(88vw,390px);background:#172a20;color:#fff;border:5px solid #ffd76a;box-shadow:9px 9px #000;padding:20px 18px 18px;text-align:center;font-family:"Courier New",monospace;transform:translateY(24px) scale(.86);transition:transform .25s steps(4,end)}
+    .treasure-overlay.is-show .treasure-card{transform:translateY(0) scale(1)}
+    .treasure-label{display:block;color:#ffd76a;font-size:11px;font-weight:900;letter-spacing:.14em}
+    .treasure-sprite{display:block;width:132px;height:132px;margin:7px auto 2px;background:url("/public/treasure-chest-v1.png") 0 0/200% 100% no-repeat;image-rendering:pixelated}
+    .treasure-overlay.is-open .treasure-sprite{background-position:100% 0;animation:treasure-pop .42s steps(4,end)}
+    .treasure-card strong{display:block;color:#fff36a;font-size:20px;line-height:1.2}
+    .treasure-card small{display:block;margin-top:9px;color:#fff;font:800 11px/1.55 "Yu Gothic",sans-serif}
+    .treasure-card em{display:inline-block;margin-top:12px;background:#ffd400;color:#111;padding:7px 10px;font-style:normal;font-size:11px;font-weight:900}
+    @keyframes treasure-pop{0%{transform:translateY(8px) scale(.9)}60%{transform:translateY(-9px) scale(1.08)}100%{transform:translateY(0) scale(1)}}
     .adventure-book{position:fixed;left:14px;bottom:18px;z-index:27;background:#172a20;color:#fff;border:3px solid #ffd76a;box-shadow:4px 4px #814520;padding:9px 11px;font:900 10px/1.35 "Courier New",monospace;letter-spacing:.03em;pointer-events:none}
     .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}
     .article-clear-badge{display:inline-block;margin-left:8px;padding:3px 6px;background:#172a20;color:#ffd76a;border:2px solid #814520;font:900 9px/1 "Courier New",monospace;vertical-align:middle}
@@ -89,7 +100,7 @@
     @keyframes walker-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
     @keyframes walker-jump{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-28px) scale(1.04)}70%{transform:translateY(-9px) scale(.98)}}
     @keyframes walker-double-jump{0%,100%{transform:translateY(0)}20%,65%{transform:translateY(-24px) rotate(-3deg)}38%,82%{transform:translateY(0) rotate(3deg)}}
-    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}}
+    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}.treasure-card{padding:16px 14px}.treasure-sprite{width:112px;height:112px}.treasure-card strong{font-size:18px}}
     @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}}
   `;
   document.head.append(coinStyle);
@@ -136,6 +147,24 @@
   coinToast.className = 'coin-toast';
   coinToast.setAttribute('role', 'status');
   document.body.append(coinToast);
+
+  const treasureOverlay = document.createElement('div');
+  treasureOverlay.className = 'treasure-overlay';
+  treasureOverlay.setAttribute('role', 'status');
+  treasureOverlay.setAttribute('aria-live', 'polite');
+  treasureOverlay.innerHTML = '<div class="treasure-card"><span class="treasure-label">TREASURE GET!</span><span class="treasure-sprite" aria-hidden="true"></span><strong>PRINT KNOWLEDGE</strong><small></small><em>🪙 COIN +1</em></div>';
+  document.body.append(treasureOverlay);
+  const treasureTitle = treasureOverlay.querySelector('small');
+  let treasureTimer;
+  const showTreasure = () => {
+    clearTimeout(treasureTimer);
+    treasureTitle.textContent = document.querySelector('h1')?.textContent.trim().replace(/\s+/g, ' ') || '記事を読破しました';
+    treasureOverlay.classList.remove('is-show', 'is-open');
+    void treasureOverlay.offsetWidth;
+    treasureOverlay.classList.add('is-show');
+    setTimeout(() => treasureOverlay.classList.add('is-open'), 320);
+    treasureTimer = setTimeout(() => treasureOverlay.classList.remove('is-show', 'is-open'), 2600);
+  };
 
   const adventureBook = document.createElement('div');
   adventureBook.className = 'adventure-book';
@@ -195,6 +224,7 @@
       localStorage.setItem(ARTICLE_CLEAR_KEY, JSON.stringify(articleClears));
     } catch {}
     paintAdventureBook();
+    showTreasure();
     if (typeof gtag === 'function') {
       gtag('event', 'article_clear', {page_path: path, cleared_articles: countArticleClears()});
     }
@@ -285,7 +315,7 @@
       localStorage.setItem(CLEAR_KEY, JSON.stringify(cleared));
     } catch {}
     paintCoins();
-    showCoinToast(reward.label);
+    if (!isArticle) showCoinToast(reward.label);
     playWalkerReaction('is-coin', 900);
     playCoin();
     if (typeof gtag === 'function') {
