@@ -4,7 +4,7 @@ import os
 from datetime import date, timedelta
 from pathlib import Path
 
-from google.oauth2 import service_account
+import google.auth
 from googleapiclient.discovery import build
 
 SCOPES = ["https://www.googleapis.com/auth/webmasters.readonly"]
@@ -58,10 +58,7 @@ def write_dimension_csv(path, response, key_name):
 
 def main():
     site_url = os.environ["GSC_SITE_URL"]
-    service_account_json = os.environ["GSC_SERVICE_ACCOUNT_JSON"]
-
-    info = json.loads(service_account_json)
-    credentials = service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
+    credentials, _ = google.auth.default(scopes=SCOPES)
     service = build("searchconsole", "v1", credentials=credentials, cache_discovery=False)
 
     # Search Console data is delayed, so end 3 days before today.
@@ -79,16 +76,8 @@ def main():
     summary = {
         "site": site_url,
         "generated_at": date.today().isoformat(),
-        "current_period": {
-            "start": current_start.isoformat(),
-            "end": current_end.isoformat(),
-            **current_total,
-        },
-        "previous_period": {
-            "start": previous_start.isoformat(),
-            "end": previous_end.isoformat(),
-            **previous_total,
-        },
+        "current_period": {"start": current_start.isoformat(), "end": current_end.isoformat(), **current_total},
+        "previous_period": {"start": previous_start.isoformat(), "end": previous_end.isoformat(), **previous_total},
         "changes_percent": {
             "clicks": pct_change(current_total["clicks"], previous_total["clicks"]),
             "impressions": pct_change(current_total["impressions"], previous_total["impressions"]),
@@ -96,33 +85,18 @@ def main():
             "position": pct_change(current_total["position"], previous_total["position"]),
         },
         "top_queries": [
-            {
-                "query": r.get("keys", [""])[0],
-                "clicks": r.get("clicks", 0),
-                "impressions": r.get("impressions", 0),
-                "ctr": round(r.get("ctr", 0.0) * 100, 2),
-                "position": round(r.get("position", 0.0), 2),
-            }
+            {"query": r.get("keys", [""])[0], "clicks": r.get("clicks", 0), "impressions": r.get("impressions", 0), "ctr": round(r.get("ctr", 0.0) * 100, 2), "position": round(r.get("position", 0.0), 2)}
             for r in queries.get("rows", [])[:50]
         ],
         "top_pages": [
-            {
-                "page": r.get("keys", [""])[0],
-                "clicks": r.get("clicks", 0),
-                "impressions": r.get("impressions", 0),
-                "ctr": round(r.get("ctr", 0.0) * 100, 2),
-                "position": round(r.get("position", 0.0), 2),
-            }
+            {"page": r.get("keys", [""])[0], "clicks": r.get("clicks", 0), "impressions": r.get("impressions", 0), "ctr": round(r.get("ctr", 0.0) * 100, 2), "position": round(r.get("position", 0.0), 2)}
             for r in pages.get("rows", [])[:50]
         ],
     }
 
-    (OUT_DIR / "summary.json").write_text(
-        json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    (OUT_DIR / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     write_dimension_csv(OUT_DIR / "queries.csv", queries, "query")
     write_dimension_csv(OUT_DIR / "pages.csv", pages, "page")
-
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 
 
