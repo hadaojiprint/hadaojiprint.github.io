@@ -84,6 +84,14 @@
     .treasure-card small{display:block;margin-top:9px;color:#fff;font:800 11px/1.55 "Yu Gothic",sans-serif}
     .treasure-card em{display:inline-block;margin-top:12px;background:#ffd400;color:#111;padding:7px 10px;font-style:normal;font-size:11px;font-weight:900}
     @keyframes treasure-pop{0%{transform:translateY(8px) scale(.9)}60%{transform:translateY(-9px) scale(1.08)}100%{transform:translateY(0) scale(1)}}
+    .page-transition{position:fixed;inset:0;z-index:999;display:grid;place-items:center;background-color:#050505;background-image:linear-gradient(#ffd40012 1px,transparent 1px),linear-gradient(90deg,#ffd40012 1px,transparent 1px);background-size:24px 24px;color:#fff;visibility:hidden;opacity:0;clip-path:inset(100% 0 0 0);pointer-events:none}
+    .page-transition.is-leaving{visibility:visible;opacity:1;clip-path:inset(0);transition:clip-path .42s steps(8,end),opacity .08s linear}
+    .page-transition.is-entering{visibility:visible;opacity:1;clip-path:inset(0)}
+    .page-transition.is-entering.is-opening{clip-path:inset(0 0 100% 0);transition:clip-path .46s steps(8,end)}
+    .transition-copy{min-width:230px;border:4px solid #ffd400;box-shadow:7px 7px #814520;background:#10241b;padding:18px 22px;text-align:center;font:900 12px/1.5 "Courier New",monospace;letter-spacing:.12em}
+    .transition-copy b{display:block;margin-top:7px;color:#ffd400;font-size:17px}
+    .transition-dots:after{content:"";animation:loading-dots .6s steps(3,end) infinite}
+    @keyframes loading-dots{0%{content:""}33%{content:"."}66%{content:".."}100%{content:"..."}}
     .adventure-book{position:fixed;left:14px;bottom:18px;z-index:27;background:#172a20;color:#fff;border:3px solid #ffd76a;box-shadow:4px 4px #814520;padding:9px 11px;font:900 10px/1.35 "Courier New",monospace;letter-spacing:.03em;pointer-events:none}
     .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}
     .article-clear-badge{display:inline-block;margin-left:8px;padding:3px 6px;background:#172a20;color:#ffd76a;border:2px solid #814520;font:900 9px/1 "Courier New",monospace;vertical-align:middle}
@@ -104,9 +112,23 @@
     @keyframes walker-jump{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-28px) scale(1.04)}70%{transform:translateY(-9px) scale(.98)}}
     @keyframes walker-double-jump{0%,100%{transform:translateY(0)}20%,65%{transform:translateY(-24px) rotate(-3deg)}38%,82%{transform:translateY(0) rotate(3deg)}}
     @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}.treasure-card{padding:16px 14px}.treasure-sprite{width:112px;height:112px}.treasure-card strong{font-size:18px}}
-    @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}}
+    @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}.page-transition{transition:none!important}.transition-dots:after{animation:none;content:"..."}}
   `;
   document.head.append(coinStyle);
+
+  const pageTransition = document.createElement('div');
+  pageTransition.className = 'page-transition';
+  pageTransition.setAttribute('aria-hidden', 'true');
+  pageTransition.innerHTML = '<div class="transition-copy"><span>NOW LOADING<span class="transition-dots"></span></span><b>NEXT STAGE</b></div>';
+  document.body.append(pageTransition);
+  try {
+    if (sessionStorage.getItem('wearprint-page-transition') === '1') {
+      sessionStorage.removeItem('wearprint-page-transition');
+      pageTransition.classList.add('is-entering');
+      requestAnimationFrame(() => requestAnimationFrame(() => pageTransition.classList.add('is-opening')));
+      setTimeout(() => pageTransition.classList.remove('is-entering', 'is-opening'), 520);
+    }
+  } catch {}
 
   const floatingCoin = document.createElement('div');
   floatingCoin.className = 'coin-hud-float';
@@ -389,6 +411,26 @@
       if (await unlockAudio()) playStep();
     }
   });
+
+  let isTransitioning = false;
+  document.addEventListener('click', event => {
+    if (isTransitioning || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+    const rawHref = link.getAttribute('href');
+    if (!rawHref || rawHref.startsWith('#') || rawHref.startsWith('mailto:') || rawHref.startsWith('tel:') || rawHref.startsWith('javascript:')) return;
+    let destination;
+    try { destination = new URL(link.href, location.href); } catch { return; }
+    if (destination.origin !== location.origin) return;
+    const sameDocument = destination.pathname === location.pathname && destination.search === location.search;
+    if (sameDocument && destination.hash) return;
+    event.preventDefault();
+    isTransitioning = true;
+    try { sessionStorage.setItem('wearprint-page-transition', '1'); } catch {}
+    pageTransition.classList.remove('is-entering', 'is-opening');
+    pageTransition.classList.add('is-leaving');
+    setTimeout(() => location.assign(destination.href), reduceMotion ? 40 : 440);
+  }, true);
 
   document.addEventListener('pointerdown', async event => {
     const choice = event.target.closest('.article-list a,.stage-grid a,.steps a,.pixel-button,.secret-route-link');
