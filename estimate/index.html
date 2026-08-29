@@ -38,7 +38,7 @@
   </section>
 
   <div class="estimate-main" id="order">
-    <form class="estimate-form" id="estimate-form" action="https://script.google.com/macros/s/AKfycbzAhqgykju9atS9Rui_QGHvmN6ANVZpYEqZ-YE7aN5QxBsJ0N9BAYujSa5FM3SR48hh/exec" method="POST" enctype="multipart/form-data">
+    <form class="estimate-form" id="estimate-form" action="https://script.google.com/macros/s/AKfycbzAhqgykju9atS9Rui_QGHvmN6ANVZpYEqZ-YE7aN5QxBsJ0N9BAYujSa5FM3SR48hh/exec" method="POST" target="estimate-submit-frame">
       <input type="hidden" name="プリント位置" id="print-position-value" value="">
       <div class="form-intro"><span>HOW TO PLAY</span><p><b>必須は5項目だけ。</b>分かる範囲で入力してください。</p></div>
 
@@ -83,11 +83,12 @@
       <div class="send-panel"><p>入力内容と添付画像をハダオジプリントへ送信します</p><button class="estimate-submit" type="submit">▶ 無料見積もりを送信</button><button class="copy-estimate" id="copy-estimate" type="button">入力内容をコピー</button><small>送信前に、入力内容と添付画像をご確認ください。</small><div class="form-message" id="form-message" role="status" aria-live="polite"></div></div>
       <section class="secret-command" aria-labelledby="secret-command-title"><div class="secret-code" aria-hidden="true"><span>HELP</span><span>＋</span><span>START</span></div><small>SECRET COMMAND / CONTINUE ROUTE</small><h2 id="secret-command-title">どうしてもクリアできない人へ</h2><p>入力が難しい、何を選べばいいか分からない。そんなときは公式LINEで、そのまま店長に相談できます。</p><a class="line-contact-link" href="https://lin.ee/YDuYZbM" target="_blank" rel="noopener"><b>LINE</b><span>公式LINEで問い合わせる</span><em>▶</em></a><small class="secret-note">画像を送りながら相談できます</small></section>
     </form>
+    <iframe id="estimate-submit-frame" name="estimate-submit-frame" title="見積もり送信処理" hidden></iframe>
 
     <aside class="estimate-summary" aria-label="入力内容の確認"><span class="summary-kicker">QUEST STATUS</span><h2>見積もり装備</h2><dl id="estimate-summary"><div><dt>用途</dt><dd>未選択</dd></div><div><dt>ウェア</dt><dd>未選択</dd></div><div><dt>枚数</dt><dd>未入力</dd></div><div><dt>プリント位置</dt><dd>未選択</dd></div><div><dt>希望納期</dt><dd>未入力</dd></div></dl><div class="summary-note"><b>店長メモ</b><p>正式な料金は、ボディ・デザイン・加工内容を確認してからご案内します。</p></div></aside>
   </div>
 </main>
 
 <footer><a class="logo" href="../"><span class="logo-pixel">W</span><span>WEAR PRINT<br><b>LAB</b></span></a><p>オリジナルウェアづくりを、もっと楽しく、分かりやすく。</p><div><a href="../">トップ</a><a href="../about/">運営者情報</a><a href="../privacy/">プライバシーポリシー</a><a href="../contact/">お問い合わせ</a></div><small>© 2026 WEAR PRINT LAB</small></footer>
-<script src="../estimate.js?v=20260829e" defer></script><script src="../scroll-adventure.js?v=20260827b" defer></script>
+<script src="../estimate.js?v=20260829f" defer></script><script src="../scroll-adventure.js?v=20260827b" defer></script>
 </body></html>
