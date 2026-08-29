@@ -29,6 +29,7 @@
   const COIN_KEY = 'wearprint-coins';
   const CLEAR_KEY = 'wearprint-coin-clears';
   const ARTICLE_CLEAR_KEY = 'wearprint-article-clears';
+  const TREASURE_KEY = 'wearprint-treasures-v1';
   const path = location.pathname.replace(/index\.html$/, '');
   let articlePaths = [
     '/articles/one-shirt/',
@@ -56,12 +57,14 @@
   let coins = 1;
   let cleared = {};
   let articleClears = {};
+  let treasures = {};
   try {
     const savedCoins = Number(localStorage.getItem(COIN_KEY));
     if (Number.isFinite(savedCoins) && savedCoins >= 0) coins = savedCoins;
     else localStorage.setItem(COIN_KEY, String(coins));
     cleared = JSON.parse(localStorage.getItem(CLEAR_KEY) || '{}') || {};
     articleClears = JSON.parse(localStorage.getItem(ARTICLE_CLEAR_KEY) || '{}') || {};
+    treasures = JSON.parse(localStorage.getItem(TREASURE_KEY) || '{}') || {};
   } catch {}
 
   const coinStyle = document.createElement('style');
@@ -152,7 +155,7 @@
   treasureOverlay.className = 'treasure-overlay';
   treasureOverlay.setAttribute('role', 'status');
   treasureOverlay.setAttribute('aria-live', 'polite');
-  treasureOverlay.innerHTML = '<div class="treasure-card"><span class="treasure-label">TREASURE GET!</span><span class="treasure-sprite" aria-hidden="true"></span><strong>PRINT KNOWLEDGE</strong><small></small><em>🪙 COIN +1</em></div>';
+  treasureOverlay.innerHTML = '<div class="treasure-card"><span class="treasure-label">TREASURE GET!</span><span class="treasure-sprite" aria-hidden="true"></span><strong>PRINT KNOWLEDGE</strong><small></small><em>KNOWLEDGE GET!</em></div>';
   document.body.append(treasureOverlay);
   const treasureTitle = treasureOverlay.querySelector('small');
   let treasureTimer;
@@ -218,15 +221,20 @@
   };
 
   const markArticleClear = () => {
-    if (!isArticle || articleClears[path]) return;
-    articleClears[path] = Date.now();
-    try {
-      localStorage.setItem(ARTICLE_CLEAR_KEY, JSON.stringify(articleClears));
-    } catch {}
-    paintAdventureBook();
-    showTreasure();
-    if (typeof gtag === 'function') {
-      gtag('event', 'article_clear', {page_path: path, cleared_articles: countArticleClears()});
+    if (!isArticle) return;
+    const firstClear = !articleClears[path];
+    if (firstClear) {
+      articleClears[path] = Date.now();
+      try { localStorage.setItem(ARTICLE_CLEAR_KEY, JSON.stringify(articleClears)); } catch {}
+      paintAdventureBook();
+      if (typeof gtag === 'function') {
+        gtag('event', 'article_clear', {page_path: path, cleared_articles: countArticleClears()});
+      }
+    }
+    if (!treasures[path]) {
+      treasures[path] = Date.now();
+      try { localStorage.setItem(TREASURE_KEY, JSON.stringify(treasures)); } catch {}
+      showTreasure();
     }
   };
 
