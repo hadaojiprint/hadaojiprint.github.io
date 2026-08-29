@@ -28,7 +28,21 @@
 
   const COIN_KEY = 'wearprint-coins';
   const CLEAR_KEY = 'wearprint-coin-clears';
+  const ARTICLE_CLEAR_KEY = 'wearprint-article-clears';
   const path = location.pathname.replace(/index\.html$/, '');
+  const articlePaths = [
+    '/articles/one-shirt/',
+    '/articles/dtf-vs-silk/',
+    '/articles/thirty-shirts-price/',
+    '/articles/print-size-position/',
+    '/articles/canva-to-shirt/',
+    '/articles/cvt-vs-act/',
+    '/articles/low-resolution-image/',
+    '/articles/team-shirts/',
+    '/articles/start-apparel-brand/',
+    '/articles/ai-image-print/'
+  ];
+  const isArticle = articlePaths.includes(path);
   const reward = path.startsWith('/articles/')
     ? {threshold: 72, label: 'ARTICLE CLEAR'}
     : path.startsWith('/prices/')
@@ -41,11 +55,13 @@
 
   let coins = 1;
   let cleared = {};
+  let articleClears = {};
   try {
     const savedCoins = Number(localStorage.getItem(COIN_KEY));
     if (Number.isFinite(savedCoins) && savedCoins >= 0) coins = savedCoins;
     else localStorage.setItem(COIN_KEY, String(coins));
     cleared = JSON.parse(localStorage.getItem(CLEAR_KEY) || '{}') || {};
+    articleClears = JSON.parse(localStorage.getItem(ARTICLE_CLEAR_KEY) || '{}') || {};
   } catch {}
 
   const coinStyle = document.createElement('style');
@@ -54,7 +70,11 @@
     .coin-toast{position:fixed;left:50%;top:18%;z-index:120;transform:translate(-50%,-20px);opacity:0;background:#172a20;color:#fff;border:4px solid #ffd76a;box-shadow:7px 7px #814520;padding:15px 20px;text-align:center;font:900 12px/1.5 "Courier New",monospace;transition:.18s;pointer-events:none}
     .coin-toast b{display:block;color:#ffd76a;font-size:19px;margin-top:3px}
     .coin-toast.is-show{opacity:1;transform:translate(-50%,0)}
-    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}}
+    .adventure-book{position:fixed;left:14px;bottom:18px;z-index:27;background:#172a20;color:#fff;border:3px solid #ffd76a;box-shadow:4px 4px #814520;padding:9px 11px;font:900 10px/1.35 "Courier New",monospace;letter-spacing:.03em;pointer-events:none}
+    .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}
+    .article-clear-badge{display:inline-block;margin-left:8px;padding:3px 6px;background:#172a20;color:#ffd76a;border:2px solid #814520;font:900 9px/1 "Courier New",monospace;vertical-align:middle}
+    .article-list article.is-cleared{outline:4px solid #159447;outline-offset:-4px}.article-list article.is-cleared .level{color:#0a6d36}.article-list article.is-cleared a{background:#159447;color:#fff}
+    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}}
   `;
   document.head.append(coinStyle);
 
@@ -67,6 +87,49 @@
   coinToast.className = 'coin-toast';
   coinToast.setAttribute('role', 'status');
   document.body.append(coinToast);
+
+  const adventureBook = document.createElement('div');
+  adventureBook.className = 'adventure-book';
+  adventureBook.setAttribute('aria-live', 'polite');
+  document.body.append(adventureBook);
+
+  const countArticleClears = () => articlePaths.filter(articlePath => articleClears[articlePath]).length;
+
+  const paintAdventureBook = () => {
+    const count = countArticleClears();
+    adventureBook.innerHTML = `<small>冒険の書</small><b>CLEAR ${String(count).padStart(2, '0')} / ${articlePaths.length}</b>`;
+
+    document.querySelectorAll('.article-list article').forEach(card => {
+      const link = card.querySelector('a[href*="/articles/"]');
+      if (!link) return;
+      const resolved = new URL(link.href, location.href).pathname.replace(/index\.html$/, '');
+      const done = Boolean(articleClears[resolved]);
+      card.classList.toggle('is-cleared', done);
+      const level = card.querySelector('.level');
+      if (level) {
+        let badge = level.querySelector('.article-clear-badge');
+        if (done && !badge) {
+          badge = document.createElement('span');
+          badge.className = 'article-clear-badge';
+          badge.textContent = 'CLEAR';
+          level.append(badge);
+        }
+        if (!done && badge) badge.remove();
+      }
+    });
+  };
+
+  const markArticleClear = () => {
+    if (!isArticle || articleClears[path]) return;
+    articleClears[path] = Date.now();
+    try {
+      localStorage.setItem(ARTICLE_CLEAR_KEY, JSON.stringify(articleClears));
+    } catch {}
+    paintAdventureBook();
+    if (typeof gtag === 'function') {
+      gtag('event', 'article_clear', {page_path: path, cleared_articles: countArticleClears()});
+    }
+  };
 
   const paintCoins = () => {
     const value = String(coins).padStart(2, '0');
@@ -181,6 +244,7 @@
     const clear = !target && progress > 92;
 
     if (reward && progress >= reward.threshold) awardCoin();
+    if (isArticle && progress >= 72) markArticleClear();
 
     if (innerWidth <= 760) {
       fill.style.width = progress + '%';
@@ -234,6 +298,7 @@
   }, {passive: true});
   addEventListener('resize', update, {passive: true});
   paintCoins();
+  paintAdventureBook();
   paintSoundButton();
   update();
 })();
