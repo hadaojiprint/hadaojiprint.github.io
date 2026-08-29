@@ -42,7 +42,7 @@
     '/articles/start-apparel-brand/',
     '/articles/ai-image-print/'
   ];
-  const isArticle = articlePaths.includes(path);
+  const isArticle = path.startsWith('/articles/');
   const reward = path.startsWith('/articles/')
     ? {threshold: 72, label: 'ARTICLE CLEAR'}
     : path.startsWith('/prices/')
@@ -94,6 +94,26 @@
   document.body.append(adventureBook);
 
   const countArticleClears = () => articlePaths.filter(articlePath => articleClears[articlePath]).length;
+
+  const refreshArticlePaths = async () => {
+    try {
+      const response = await fetch('/sitemap.xml', {cache: 'no-store'});
+      if (!response.ok) return;
+      const xml = await response.text();
+      const doc = new DOMParser().parseFromString(xml, 'application/xml');
+      const discovered = [...doc.querySelectorAll('url > loc')]
+        .map(node => {
+          try { return new URL(node.textContent.trim()).pathname.replace(/index\.html$/, ''); }
+          catch { return ''; }
+        })
+        .filter(p => p.startsWith('/articles/'));
+      const unique = [...new Set(discovered)];
+      if (unique.length) {
+        articlePaths = unique;
+        paintAdventureBook();
+      }
+    } catch {}
+  };
 
   const paintAdventureBook = () => {
     const count = countArticleClears();
@@ -299,6 +319,7 @@
   addEventListener('resize', update, {passive: true});
   paintCoins();
   paintAdventureBook();
+  refreshArticlePaths();
   paintSoundButton();
   update();
 })();
