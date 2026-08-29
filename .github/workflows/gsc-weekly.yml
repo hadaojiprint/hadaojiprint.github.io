@@ -2,6 +2,12 @@ name: Weekly Search Console Report
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/gsc-weekly.yml'
+      - 'scripts/gsc_fetch.py'
   schedule:
     # Monday 07:30 JST = Sunday 22:30 UTC
     - cron: '30 22 * * 0'
