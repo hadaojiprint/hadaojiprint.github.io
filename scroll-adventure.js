@@ -101,8 +101,8 @@
 
   const CHARACTER_KEY = 'wearprint-walker-character';
   const characters = {
-    hadaoji: {src: '/public/hadaoji-actions-v1.png', name: 'ハダオジくん'},
-    yuu: {src: '/public/yuu-actions-v1.png', name: 'ゆうちゃん'}
+    hadaoji: {src: '/public/hadaoji-actions-v2.png', name: 'ハダオジくん'},
+    yuu: {src: '/public/yuu-actions-v2.png', name: 'ゆうちゃん'}
   };
   let activeCharacter = 'hadaoji';
   try {
