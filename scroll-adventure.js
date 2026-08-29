@@ -74,9 +74,8 @@
     .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}
     .article-clear-badge{display:inline-block;margin-left:8px;padding:3px 6px;background:#172a20;color:#ffd76a;border:2px solid #814520;font:900 9px/1 "Courier New",monospace;vertical-align:middle}
     .article-list article.is-cleared{outline:4px solid #159447;outline-offset:-4px}.article-list article.is-cleared .level{color:#0a6d36}.article-list article.is-cleared a{background:#159447;color:#fff}
-    .scroll-walker{position:fixed;right:22px;bottom:82px;z-index:108;width:92px;height:128px;padding:0;border:0;background:transparent;cursor:pointer;filter:drop-shadow(4px 5px 0 #000);animation:walker-step .32s steps(2,end) infinite;animation-play-state:paused;transform-origin:center bottom;-webkit-tap-highlight-color:transparent}
+    .scroll-walker{position:fixed;right:22px;bottom:82px;z-index:108;width:92px;height:128px;padding:0;border:0;background:transparent;cursor:pointer;animation:walker-step .32s steps(2,end) infinite;animation-play-state:paused;transform-origin:center bottom;-webkit-tap-highlight-color:transparent}
     .scroll-walker img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;image-rendering:pixelated}
-    .scroll-walker:after{content:"";position:absolute;left:14%;right:14%;bottom:-3px;height:5px;background:#0008;border-radius:50%;z-index:-1}
     .scroll-walker:focus-visible{outline:4px solid #ffd400;outline-offset:4px}
     @keyframes walker-step{0%{transform:translateY(0) rotate(-2deg) scaleY(1)}50%{transform:translateY(-6px) rotate(2deg) scaleY(.98)}100%{transform:translateY(0) rotate(-2deg) scaleY(1)}}
     @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:94px}}
