@@ -25,6 +25,62 @@
   const soundButton = nav.querySelector('.quest-sound');
   const button = nav.querySelector('.quest-next');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const COIN_KEY = 'wearprint-coins';
+  const CLEAR_KEY = 'wearprint-coin-clears';
+  const path = location.pathname.replace(/index\.html$/, '');
+  const reward = path.startsWith('/articles/')
+    ? {threshold: 72, label: 'ARTICLE CLEAR'}
+    : path.startsWith('/prices/')
+      ? {threshold: 55, label: 'PRICE CHECK'}
+      : path.startsWith('/works/')
+        ? {threshold: 60, label: 'GEAR DISCOVERY'}
+        : path.startsWith('/faq/')
+          ? {threshold: 60, label: 'HINT FOUND'}
+          : null;
+
+  let coins = 1;
+  let cleared = {};
+  try {
+    const savedCoins = Number(localStorage.getItem(COIN_KEY));
+    if (Number.isFinite(savedCoins) && savedCoins >= 0) coins = savedCoins;
+    else localStorage.setItem(COIN_KEY, String(coins));
+    cleared = JSON.parse(localStorage.getItem(CLEAR_KEY) || '{}') || {};
+  } catch {}
+
+  const coinStyle = document.createElement('style');
+  coinStyle.textContent = `
+    .coin-hud-float{position:fixed;top:86px;right:14px;z-index:28;background:#172a20;color:#fff;border:3px solid #ffd76a;box-shadow:4px 4px #814520;padding:8px 10px;font:900 11px/1.1 "Courier New",monospace;letter-spacing:.05em;pointer-events:none}
+    .coin-toast{position:fixed;left:50%;top:18%;z-index:120;transform:translate(-50%,-20px);opacity:0;background:#172a20;color:#fff;border:4px solid #ffd76a;box-shadow:7px 7px #814520;padding:15px 20px;text-align:center;font:900 12px/1.5 "Courier New",monospace;transition:.18s;pointer-events:none}
+    .coin-toast b{display:block;color:#ffd76a;font-size:19px;margin-top:3px}
+    .coin-toast.is-show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}}
+  `;
+  document.head.append(coinStyle);
+
+  const floatingCoin = document.createElement('div');
+  floatingCoin.className = 'coin-hud-float';
+  floatingCoin.setAttribute('aria-live', 'polite');
+  if (!document.querySelector('.game-hud')) document.body.append(floatingCoin);
+
+  const coinToast = document.createElement('div');
+  coinToast.className = 'coin-toast';
+  coinToast.setAttribute('role', 'status');
+  document.body.append(coinToast);
+
+  const paintCoins = () => {
+    const value = String(coins).padStart(2, '0');
+    const gameHudCoins = document.querySelector('.game-hud span:nth-child(2)');
+    if (gameHudCoins) gameHudCoins.textContent = `COIN × ${value}`;
+    floatingCoin.textContent = `🪙 COIN × ${value}`;
+  };
+
+  const showCoinToast = rewardLabel => {
+    coinToast.innerHTML = `${rewardLabel}<b>🪙 COIN +1</b>`;
+    coinToast.classList.add('is-show');
+    setTimeout(() => coinToast.classList.remove('is-show'), 1800);
+  };
+
   let soundOn = false;
   try {
     soundOn = localStorage.getItem('wearprint-sound') === 'on';
@@ -73,19 +129,35 @@
     oscillator.stop(start + duration);
   };
 
-  const playSelect = () => {
-    tone(520, 0.045, 0, 0.018);
-  };
-
+  const playSelect = () => tone(520, 0.045, 0, 0.018);
   const playStep = () => {
     tone(440, 0.055, 0);
     tone(660, 0.065, 0.055);
   };
-
   const playClear = () => {
     tone(523, 0.08, 0);
     tone(659, 0.08, 0.08);
     tone(784, 0.14, 0.16);
+  };
+  const playCoin = () => {
+    tone(988, 0.05, 0, 0.03);
+    tone(1319, 0.08, 0.055, 0.03);
+  };
+
+  const awardCoin = () => {
+    if (!reward || cleared[path]) return;
+    cleared[path] = Date.now();
+    coins += 1;
+    try {
+      localStorage.setItem(COIN_KEY, String(coins));
+      localStorage.setItem(CLEAR_KEY, JSON.stringify(cleared));
+    } catch {}
+    paintCoins();
+    showCoinToast(reward.label);
+    playCoin();
+    if (typeof gtag === 'function') {
+      gtag('event', 'coin_earned', {coin_total: coins, reward_type: reward.label, page_path: path});
+    }
   };
 
   const paintSoundButton = () => {
@@ -107,6 +179,8 @@
     const checkpoint = scrollY + innerHeight * 0.48;
     target = stages.find(stage => stage.offsetTop > checkpoint) || null;
     const clear = !target && progress > 92;
+
+    if (reward && progress >= reward.threshold) awardCoin();
 
     if (innerWidth <= 760) {
       fill.style.width = progress + '%';
@@ -159,6 +233,7 @@
     }
   }, {passive: true});
   addEventListener('resize', update, {passive: true});
+  paintCoins();
   paintSoundButton();
   update();
 })();
