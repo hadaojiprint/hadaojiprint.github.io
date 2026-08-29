@@ -1,0 +1,45 @@
+name: Dynamic Adventure Article Count
+on:
+  push:
+    paths:
+      - '.github/workflows/dynamic-adventure-count.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make adventure count dynamic
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('scroll-adventure.js')
+          s = p.read_text()
+          s = s.replace("  const isArticle = articlePaths.includes(path);", "  const isArticle = path.startsWith('/articles/');")
+          needle = "  const countArticleClears = () => articlePaths.filter(articlePath => articleClears[articlePath]).length;\n"
+          insert = """  const countArticleClears = () => articlePaths.filter(articlePath => articleClears[articlePath]).length;\n\n  const refreshArticlePaths = async () => {\n    try {\n      const response = await fetch('/sitemap.xml', {cache: 'no-store'});\n      if (!response.ok) return;\n      const xml = await response.text();\n      const doc = new DOMParser().parseFromString(xml, 'application/xml');\n      const discovered = [...doc.querySelectorAll('url > loc')]\n        .map(node => {\n          try { return new URL(node.textContent.trim()).pathname.replace(/index\\.html$/, ''); }\n          catch { return ''; }\n        })\n        .filter(p => p.startsWith('/articles/'));\n      const unique = [...new Set(discovered)];\n      if (unique.length) {\n        articlePaths = unique;\n        paintAdventureBook();\n      }\n    } catch {}\n  };\n"""
+          if needle not in s:
+              raise SystemExit('countArticleClears anchor not found')
+          s = s.replace(needle, insert, 1)
+          s = s.replace("  paintAdventureBook();\n  paintSoundButton();", "  paintAdventureBook();\n  refreshArticlePaths();\n  paintSoundButton();", 1)
+          p.write_text(s)
+          PY
+      - name: Bust JS cache in HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          for p in Path('.').rglob('*.html'):
+              s = p.read_text()
+              ns = re.sub(r'(scroll-adventure\.js\?v=)[^\"\']+', r'\g<1>20260830b', s)
+              if ns != s:
+                  p.write_text(ns)
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "hadaojiprint"
+          git config user.email "hadaojiprint@gmail.com"
+          git add scroll-adventure.js '*.html' '**/*.html' || true
+          git commit -m "Make adventure book article count dynamic" || exit 0
+          git push
