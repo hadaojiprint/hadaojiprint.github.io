@@ -74,7 +74,12 @@
     .adventure-book small{display:block;color:#ffd76a;font-size:8px}.adventure-book b{font-size:12px}
     .article-clear-badge{display:inline-block;margin-left:8px;padding:3px 6px;background:#172a20;color:#ffd76a;border:2px solid #814520;font:900 9px/1 "Courier New",monospace;vertical-align:middle}
     .article-list article.is-cleared{outline:4px solid #159447;outline-offset:-4px}.article-list article.is-cleared .level{color:#0a6d36}.article-list article.is-cleared a{background:#159447;color:#fff}
-    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}}
+    .scroll-walker{position:fixed;left:16px;bottom:78px;z-index:26;width:72px;height:82px;pointer-events:none;filter:drop-shadow(4px 5px 0 #000);transition:left .08s linear;animation:walker-step .34s steps(2,end) infinite;animation-play-state:paused;transform-origin:center bottom}
+    .scroll-walker img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;image-rendering:pixelated}
+    .scroll-walker:after{content:"";position:absolute;left:12%;right:12%;bottom:-3px;height:5px;background:#0008;border-radius:50%;z-index:-1}
+    @keyframes walker-step{0%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}100%{transform:translateY(0) rotate(-2deg)}}
+    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{bottom:72px;width:52px;height:60px}}
+    @media(prefers-reduced-motion:reduce){.scroll-walker{animation:none;transition:none}}
   `;
   document.head.append(coinStyle);
 
@@ -82,6 +87,12 @@
   floatingCoin.className = 'coin-hud-float';
   floatingCoin.setAttribute('aria-live', 'polite');
   if (!document.querySelector('.game-hud')) document.body.append(floatingCoin);
+
+  const walker = document.createElement('div');
+  walker.className = 'scroll-walker';
+  walker.setAttribute('aria-hidden', 'true');
+  walker.innerHTML = '<img src="/public/hadaoji-kun.png" alt="">';
+  document.body.append(walker);
 
   const coinToast = document.createElement('div');
   coinToast.className = 'coin-toast';
@@ -259,6 +270,11 @@
     const doc = document.documentElement;
     const max = Math.max(1, doc.scrollHeight - innerHeight);
     const progress = Math.min(100, Math.max(0, Math.round(scrollY / max * 100)));
+    const walkerWidth = innerWidth <= 760 ? 52 : 72;
+    const rightReserve = innerWidth <= 760 ? 16 : 300;
+    const walkerStart = 16;
+    const walkerEnd = Math.max(walkerStart, innerWidth - walkerWidth - rightReserve);
+    walker.style.left = walkerStart + (walkerEnd - walkerStart) * progress / 100 + 'px';
     const checkpoint = scrollY + innerHeight * 0.48;
     target = stages.find(stage => stage.offsetTop > checkpoint) || null;
     const clear = !target && progress > 92;
@@ -310,7 +326,11 @@
     if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'secret_route', event_label: 'official_line'});
   }));
 
+  let walkTimer;
   addEventListener('scroll', () => {
+    walker.style.animationPlayState = 'running';
+    clearTimeout(walkTimer);
+    walkTimer = setTimeout(() => { walker.style.animationPlayState = 'paused'; }, 140);
     if (!ticking) {
       requestAnimationFrame(update);
       ticking = true;
