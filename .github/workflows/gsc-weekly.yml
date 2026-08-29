@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   gsc-report:
@@ -15,6 +16,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/222561776881/locations/global/workloadIdentityPools/hadaoji-gsc/providers/github-actions
+          service_account: hadaoji-gsc@project-d717ade0-c6e3-4065-b04.iam.gserviceaccount.com
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,8 +33,7 @@ jobs:
 
       - name: Fetch Search Console data
         env:
-          GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
-          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+          GSC_SITE_URL: https://hadaojiprint.github.io/
         run: python scripts/gsc_fetch.py
 
       - name: Upload SEO report
