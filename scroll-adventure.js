@@ -121,10 +121,11 @@
     .walker-sprite{display:block;width:100%;height:100%;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;image-rendering:pixelated}
     .walker-effects{position:fixed;right:0;bottom:68px;z-index:107;width:230px;height:210px;overflow:visible;pointer-events:none}
     .walker-effect{position:absolute;display:block;background-repeat:no-repeat;background-position:center;background-size:contain;image-rendering:pixelated;will-change:transform,opacity}
-    .walker-bat{left:210px;top:var(--bat-y,55px);width:46px;height:36px;background-image:url("/public/pixel-bat-v1.png?v=1");animation:walker-bat-cross var(--bat-speed,1.25s) steps(12,end) forwards}
-    .walker-stone{left:150px;top:178px;width:24px;height:24px;background-image:url("/public/pixel-stone-v1.png?v=1");animation:walker-stone-trail .95s steps(9,end) forwards}
+    .walker-bat{left:210px;top:var(--bat-y,55px);width:46px;height:36px;background-image:url("/public/pixel-bat-v1.png?v=1");background-size:400% auto;background-position:6% 22%;animation:walker-bat-cross var(--bat-speed,1.25s) steps(12,end) forwards,walker-bat-flap .26s steps(1,end) infinite}
+    .walker-stone{left:150px;top:178px;width:24px;height:24px;background-image:url("/public/pixel-stone-v1.png?v=1");background-size:425% auto;background-position:32% 52%;animation:walker-stone-trail .95s steps(9,end) forwards}
     .walker-dust{left:153px;top:186px;width:7px;height:7px;background:#c49a61;box-shadow:9px 3px #e1bf83,-7px 7px #8f6946;animation:walker-dust-fade .48s steps(5,end) forwards}
     @keyframes walker-bat-cross{0%{transform:translate(0,8px) scale(.72);opacity:0}12%{opacity:1}35%{transform:translate(-70px,-8px) scale(.92) rotate(-5deg)}65%{transform:translate(-150px,10px) scale(1) rotate(4deg)}100%{transform:translate(-270px,-18px) scale(.78) rotate(-6deg);opacity:0}}
+    @keyframes walker-bat-flap{0%,49%{background-position:6% 22%}50%,100%{background-position:78% 22%}}
     @keyframes walker-stone-trail{0%{transform:translate(0,0) scale(1) rotate(0);opacity:1}60%{opacity:.9}100%{transform:translate(var(--stone-x,-34px),-98px) scale(.16) rotate(540deg);opacity:0}}
     @keyframes walker-dust-fade{0%{transform:translate(0,0) scale(1);opacity:.85}100%{transform:translate(var(--dust-x,-18px),-24px) scale(.2);opacity:0}}
     .scroll-walker:focus-visible{outline:4px solid #ffd400;outline-offset:4px}
