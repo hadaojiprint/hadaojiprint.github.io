@@ -219,3 +219,8 @@ footer{background:#132e25;border-top-color:var(--sand)}
 .reward-guide-button{position:relative;z-index:1;display:inline-block}
 @media(max-width:780px){.reward-guide-flow{grid-template-columns:1fr;max-width:460px;gap:10px}.reward-guide-arrow{transform:rotate(90deg);line-height:1}.reward-guide-flow article{min-height:auto}.reward-guide:before,.reward-guide:after{opacity:.45}}
 @media(max-width:520px){.reward-guide{padding:34px 13px 42px;box-shadow:inset 0 0 0 3px #e9b943}.reward-guide-intro h2{font-size:33px}.reward-guide-intro p{font-size:12px}.reward-guide-flow{margin-top:22px}.reward-guide-flow article{padding:17px 13px;border-width:4px}.reward-guide-flow article>strong{font-size:15px}.reward-guide-button{width:100%;text-align:center}}
+
+
+/* Improve LINE menu contrast */
+.site-menu nav .menu-line{color:#17130c}
+.site-menu nav .menu-line>b{color:#17130c}
