@@ -195,3 +195,27 @@ footer{background:#132e25;border-top-color:var(--sand)}
 .faq-hero{width:min(100%,1220px)}
 @media(max-width:820px){.faq-tavern-bg{background-image:linear-gradient(#1f120515,#07130a52),url("./public/faq/tavern-bg-mobile.webp");background-position:center top;filter:saturate(1.16) brightness(1.32)}.faq-hero{padding-top:145px}}
 @media(max-width:560px){.faq-hero{min-height:980px;padding:165px 14px 60px}.faq-hero-copy{background:#fff1c9eb}}
+
+
+/* Article quest reward guide */
+.reward-guide{position:relative;overflow:hidden;padding:clamp(34px,5vw,62px) clamp(18px,5vw,70px);background:#102f23;color:#fff;border-top:7px solid #fff4b8;border-bottom:7px solid #07150f;box-shadow:inset 0 0 0 5px #e9b943;text-align:center}
+.reward-guide:before,.reward-guide:after{content:"";position:absolute;width:18px;height:18px;background:#ffda45;box-shadow:24px 0 #ffda45,48px 0 #ffda45}
+.reward-guide:before{left:22px;top:22px}.reward-guide:after{right:70px;bottom:22px}
+.reward-guide-intro{position:relative;z-index:1;max-width:820px;margin:0 auto}
+.reward-guide-intro small{display:inline-block;padding:7px 10px;background:#ffda45;color:#173c2d;border:3px solid #fff;font-size:9px}
+.reward-guide-intro h2{margin:15px 0 10px;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(31px,5vw,55px);line-height:1.05;letter-spacing:.03em}
+.reward-guide-intro h2 em{color:#ffda45;font-style:normal;text-shadow:4px 4px #70401f}
+.reward-guide-intro p{max-width:690px;margin:0 auto;font-family:"Yu Gothic",sans-serif;font-size:14px;font-weight:700;line-height:1.8}
+.reward-guide-flow{position:relative;z-index:1;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:14px;max-width:1060px;margin:28px auto 24px}
+.reward-guide-flow article{display:flex;flex-direction:column;justify-content:center;min-height:190px;padding:20px 16px;background:#fff7d4;color:#21170d;border:5px solid #fff;box-shadow:7px 7px #e9b943}
+.reward-guide-flow article>b{align-self:center;padding:5px 8px;background:#70401f;color:#ffda45;font-size:9px}
+.reward-guide-flow article>strong{margin-top:14px;font-family:"Yu Gothic",sans-serif;font-size:17px;font-weight:900}
+.reward-guide-flow article>p{margin:8px 0 0;font-family:"Yu Gothic",sans-serif;font-size:12px;font-weight:700;line-height:1.65}
+.reward-guide-arrow{color:#ffda45;font-size:25px;text-shadow:3px 3px #70401f}
+.reward-guide-chest{display:block;width:72px;height:58px;margin:9px auto -4px;background:url("./public/treasure-chest-v1.png") right center/200% 100% no-repeat;image-rendering:pixelated}
+.reward-guide-treasure>strong{margin-top:7px!important}
+.reward-guide-badge{display:grid;place-items:center;width:58px;height:58px;margin:9px auto -4px;background:#173c2d;color:#ffda45;border:5px double #e9b943;box-shadow:4px 4px #70401f;font-family:Impact,"Arial Black",sans-serif;font-size:34px}
+.reward-guide-master>strong{color:#0a7140;margin-top:8px!important}
+.reward-guide-button{position:relative;z-index:1;display:inline-block}
+@media(max-width:780px){.reward-guide-flow{grid-template-columns:1fr;max-width:460px;gap:10px}.reward-guide-arrow{transform:rotate(90deg);line-height:1}.reward-guide-flow article{min-height:auto}.reward-guide:before,.reward-guide:after{opacity:.45}}
+@media(max-width:520px){.reward-guide{padding:34px 13px 42px;box-shadow:inset 0 0 0 3px #e9b943}.reward-guide-intro h2{font-size:33px}.reward-guide-intro p{font-size:12px}.reward-guide-flow{margin-top:22px}.reward-guide-flow article{padding:17px 13px;border-width:4px}.reward-guide-flow article>strong{font-size:15px}.reward-guide-button{width:100%;text-align:center}}
