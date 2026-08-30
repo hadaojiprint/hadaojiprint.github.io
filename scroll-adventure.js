@@ -31,6 +31,14 @@
   const ARTICLE_CLEAR_KEY = 'wearprint-article-clears';
   const TREASURE_KEY = 'wearprint-treasures-v1';
   const MASTER_KEY = 'wearprint-master-signature';
+  const STAGE_TREASURE_KEY = 'wearprint-stage-treasures-v1';
+  const HUNTER_KEY = 'wearprint-treasure-hunter-v1';
+  const STAGE_QUESTS = [
+    {id: 'volcano', name: 'プリント火山島', treasure: '炎のスキージ', articles: ['/articles/dtf-vs-silk/', '/articles/thirty-shirts-price/']},
+    {id: 'beach', name: 'サイズの砂浜', treasure: '潮風の定規', articles: ['/articles/print-size-position/', '/articles/team-shirts/']},
+    {id: 'forest', name: 'デザインの森', treasure: '黄金のデザインペン', articles: ['/articles/canva-to-shirt/', '/articles/low-resolution-image/', '/articles/ai-image-print/', '/articles/start-apparel-brand/']},
+    {id: 'mountain', name: 'ボディの山', treasure: '伝説のTシャツ', articles: ['/articles/cvt-vs-act/', '/articles/one-shirt/']}
+  ];
   const path = location.pathname.replace(/index\.html$/, '');
   let articlePaths = [
     '/articles/one-shirt/',
@@ -60,6 +68,8 @@
   let articleClears = {};
   let treasures = {};
   let awardedMasterSignature = '';
+  let stageTreasures = {};
+  let treasureHunter = false;
   try {
     const savedCoins = Number(localStorage.getItem(COIN_KEY));
     if (Number.isFinite(savedCoins) && savedCoins >= 0) coins = savedCoins;
@@ -68,6 +78,8 @@
     articleClears = JSON.parse(localStorage.getItem(ARTICLE_CLEAR_KEY) || '{}') || {};
     treasures = JSON.parse(localStorage.getItem(TREASURE_KEY) || '{}') || {};
     awardedMasterSignature = localStorage.getItem(MASTER_KEY) || '';
+    stageTreasures = JSON.parse(localStorage.getItem(STAGE_TREASURE_KEY) || '{}') || {};
+    treasureHunter = localStorage.getItem(HUNTER_KEY) === '1';
   } catch {}
 
   const coinStyle = document.createElement('style');
@@ -122,6 +134,14 @@
     @keyframes walker-double-jump{0%,100%{transform:translateY(0)}20%,65%{transform:translateY(-24px) rotate(-3deg)}38%,82%{transform:translateY(0) rotate(3deg)}}
     @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}.treasure-card{padding:16px 14px}.treasure-sprite{width:112px;height:112px}.treasure-card strong{font-size:18px}.master-card{padding:22px 14px}.master-card strong{font-size:30px}}
     @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}.page-transition{transition:none!important}.transition-dots:after{animation:none;content:"..."}.master-stars{animation:none}}
+    .stage-treasure-progress{margin:13px 0 2px;padding:9px 8px;background:#fff7d4;color:#21170d;border:3px solid #71401f;text-align:left;font-family:"Courier New",monospace}
+    .stage-treasure-progress small{display:block;color:#0a7140;font-size:8px}.stage-treasure-progress b{display:block;margin-top:4px;font-size:11px}.stage-treasure-progress em{display:block;margin-top:4px;color:#71401f;font-style:normal;font-size:9px}
+    .stage-grid article.is-stage-clear{outline:5px solid #ffd400;outline-offset:-5px}.stage-grid article.is-stage-clear .stage-treasure-progress{background:#173c2d;color:#fff;border-color:#ffd400}.stage-grid article.is-stage-clear .stage-treasure-progress small,.stage-grid article.is-stage-clear .stage-treasure-progress em{color:#ffd400}
+    .adventure-book .book-treasure{display:block;margin-top:5px;padding-top:4px;border-top:1px dashed #ffd76a;color:#8affb8;font-size:8px}.adventure-book.is-hunter{box-shadow:4px 4px #814520,0 0 0 3px #06c755}
+    .stage-award-overlay{position:fixed;inset:0;z-index:142;display:grid;place-items:center;padding:20px;background:#000b;opacity:0;visibility:hidden;transition:opacity .16s steps(2,end);pointer-events:none}.stage-award-overlay.is-show{opacity:1;visibility:visible}
+    .stage-award-card{width:min(90vw,430px);background:#10241b;color:#fff;border:6px solid #ffd400;box-shadow:10px 10px #814520;padding:24px 19px;text-align:center;font-family:"Courier New",monospace;transform:translateY(24px) scale(.8);transition:transform .36s steps(5,end)}.stage-award-overlay.is-show .stage-award-card{transform:translateY(0) scale(1)}
+    .stage-award-card .treasure-sprite{background-position:100% 0}.stage-award-card small{display:block;color:#8affb8;font-size:9px;letter-spacing:.12em}.stage-award-card strong{display:block;color:#fff36a;font-size:clamp(23px,7vw,36px);line-height:1.1;text-shadow:4px 4px #814520}.stage-award-card p{margin:9px 0 0;font:800 12px/1.6 "Yu Gothic",sans-serif}.stage-award-card b{display:inline-block;margin-top:12px;padding:7px 10px;background:#ffd400;color:#111;font-size:10px}
+    .hunter-overlay .master-card{border-color:#8affb8;box-shadow:10px 10px #064f2e}.hunter-overlay .master-card strong{color:#8affb8}.hunter-overlay .master-card b{background:#06c755;color:#fff}
   `;
   document.head.append(coinStyle);
 
@@ -216,6 +236,40 @@
     masterTimer = setTimeout(() => masterOverlay.classList.remove('is-show'), 3600);
   };
 
+  const stageAwardOverlay = document.createElement('div');
+  stageAwardOverlay.className = 'stage-award-overlay';
+  stageAwardOverlay.setAttribute('role', 'status');
+  stageAwardOverlay.setAttribute('aria-live', 'polite');
+  stageAwardOverlay.innerHTML = '<div class="stage-award-card"><small>STAGE CLEAR / TREASURE GET!</small><span class="treasure-sprite" aria-hidden="true"></span><strong></strong><p></p><b>財宝を獲得！</b></div>';
+  document.body.append(stageAwardOverlay);
+  let stageAwardTimer;
+  const showStageTreasureAward = stage => {
+    clearTimeout(stageAwardTimer);
+    stageAwardOverlay.querySelector('strong').textContent = stage.treasure;
+    stageAwardOverlay.querySelector('p').textContent = stage.name + 'を完全攻略しました';
+    stageAwardOverlay.classList.remove('is-show');
+    void stageAwardOverlay.offsetWidth;
+    stageAwardOverlay.classList.add('is-show');
+    playWalkerReaction('is-coin', 1400);
+    stageAwardTimer = setTimeout(() => stageAwardOverlay.classList.remove('is-show'), 3400);
+  };
+
+  const hunterOverlay = document.createElement('div');
+  hunterOverlay.className = 'master-overlay hunter-overlay';
+  hunterOverlay.setAttribute('role', 'status');
+  hunterOverlay.setAttribute('aria-live', 'polite');
+  hunterOverlay.innerHTML = '<div class="master-card"><span class="master-stars">◆ ◆ ◆ ◆</span><small>ALL TREASURES FOUND!</small><strong>TREASURE<br>HUNTER</strong><p>4つの島の財宝をすべて集めました</p><b>称号を獲得！</b></div>';
+  document.body.append(hunterOverlay);
+  let hunterTimer;
+  const showHunterAward = () => {
+    clearTimeout(hunterTimer);
+    hunterOverlay.classList.remove('is-show');
+    void hunterOverlay.offsetWidth;
+    hunterOverlay.classList.add('is-show');
+    playWalkerReaction('is-coin', 1800);
+    hunterTimer = setTimeout(() => hunterOverlay.classList.remove('is-show'), 4200);
+  };
+
   const adventureBook = document.createElement('div');
   adventureBook.className = 'adventure-book';
   adventureBook.setAttribute('aria-live', 'polite');
@@ -244,6 +298,56 @@
     paintAdventureBook();
   };
 
+  const countStageArticles = stage => stage.articles.filter(articlePath => articleClears[articlePath]).length;
+  const paintStageTreasures = (announce = false) => {
+    const newlyAwarded = [];
+    STAGE_QUESTS.forEach((stage, index) => {
+      const count = countStageArticles(stage);
+      const complete = count === stage.articles.length;
+      if (complete && !stageTreasures[stage.id]) {
+        stageTreasures[stage.id] = Date.now();
+        newlyAwarded.push(stage);
+      }
+      const card = document.querySelectorAll('.stage-grid article')[index];
+      if (!card) return;
+      card.dataset.stage = stage.id;
+      const owned = Boolean(stageTreasures[stage.id]);
+      card.classList.toggle('is-stage-clear', owned);
+      let panel = card.querySelector('.stage-treasure-progress');
+      if (!panel) {
+        panel = document.createElement('div');
+        panel.className = 'stage-treasure-progress';
+        const links = [...card.querySelectorAll(':scope > a')];
+        card.insertBefore(panel, links[links.length - 1] || null);
+      }
+      const remaining = Math.max(0, stage.articles.length - count);
+      panel.innerHTML = owned
+        ? `<small>TREASURE GET!</small><b>${stage.treasure}</b><em>STAGE CLEAR ${count} / ${stage.articles.length}</em>`
+        : `<small>STAGE QUEST ${count} / ${stage.articles.length}</small><b>財宝：${stage.treasure}</b><em>あと${remaining}記事で獲得</em>`;
+    });
+
+    if (newlyAwarded.length) {
+      try { localStorage.setItem(STAGE_TREASURE_KEY, JSON.stringify(stageTreasures)); } catch {}
+    }
+    const allTreasures = STAGE_QUESTS.every(stage => Boolean(stageTreasures[stage.id]));
+    const newHunter = allTreasures && !treasureHunter;
+    if (newHunter) {
+      treasureHunter = true;
+      try { localStorage.setItem(HUNTER_KEY, '1'); } catch {}
+    }
+    adventureBook?.classList.toggle('is-hunter', treasureHunter);
+
+    if (announce && newlyAwarded.length) {
+      const latest = newlyAwarded[newlyAwarded.length - 1];
+      setTimeout(() => showStageTreasureAward(latest), 2850);
+      if (typeof gtag === 'function') gtag('event', 'stage_treasure', {stage_id: latest.id, treasure_name: latest.treasure});
+      if (newHunter) {
+        setTimeout(showHunterAward, 6600);
+        if (typeof gtag === 'function') gtag('event', 'treasure_hunter', {treasure_total: STAGE_QUESTS.length});
+      }
+    }
+  };
+
   const paintAdventureBook = () => {
     const count = countArticleClears();
     const total = articlePaths.length;
@@ -257,7 +361,9 @@
       : hadMaster
         ? `NEW QUEST! あと${remaining}記事`
         : `PRINT MASTERまで あと${remaining}記事`;
-    adventureBook.innerHTML = `<small>冒険の書</small><b>CLEAR ${String(count).padStart(2, '0')} / ${total}</b><em>${status}</em>`;
+    const treasureCount = STAGE_QUESTS.filter(stage => stageTreasures[stage.id]).length;
+    const treasureStatus = treasureHunter ? 'TITLE: TREASURE HUNTER' : `TREASURE ${treasureCount} / ${STAGE_QUESTS.length}`;
+    adventureBook.innerHTML = `<small>冒険の書</small><b>CLEAR ${String(count).padStart(2, '0')} / ${total}</b><em>${status}</em><span class="book-treasure">${treasureStatus}</span>`;
 
     if (isMaster && awardedMasterSignature !== signature) {
       awardedMasterSignature = signature;
@@ -294,6 +400,7 @@
     if (firstClear) {
       articleClears[path] = Date.now();
       try { localStorage.setItem(ARTICLE_CLEAR_KEY, JSON.stringify(articleClears)); } catch {}
+      paintStageTreasures(true);
       paintAdventureBook();
       if (typeof gtag === 'function') {
         gtag('event', 'article_clear', {page_path: path, cleared_articles: countArticleClears()});
@@ -509,6 +616,7 @@
   }, {passive: true});
   addEventListener('resize', update, {passive: true});
   paintCoins();
+  paintStageTreasures(false);
   paintAdventureBook();
   refreshArticlePaths();
   paintSoundButton();
