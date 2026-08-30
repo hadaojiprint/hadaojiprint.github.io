@@ -147,7 +147,7 @@
     .treasure-vault-panel{width:min(94vw,760px);max-height:min(88vh,760px);overflow:auto;background:#fff7d4;color:#21170d;border:6px solid #ffd400;box-shadow:11px 11px #814520;padding:18px;font-family:"Courier New",monospace;transform:scale(.88);transition:transform .28s steps(4,end)}.treasure-vault.is-show .treasure-vault-panel{transform:scale(1)}
     .treasure-vault-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 14px;background:#173c2d;color:#fff}.treasure-vault-head small{display:block;color:#8affb8;font-size:8px}.treasure-vault-head strong{display:block;margin-top:4px;color:#ffd400;font-size:20px}.treasure-vault-close{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;background:#ffd400;color:#111;border:4px solid #fff;font:900 24px/1 "Courier New",monospace;cursor:pointer}
     .treasure-vault-summary{margin:13px 0;padding:10px;background:#fff;color:#173c2d;border:3px solid #71401f;text-align:center;font-size:11px}.treasure-vault-summary b{color:#0a7140}
-    .treasure-vault-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.vault-item{display:grid;grid-template-columns:86px 1fr;align-items:center;gap:10px;min-height:116px;padding:11px;background:#f1ead4;border:4px solid #8b7c68}.vault-item.is-owned{background:#173c2d;color:#fff;border-color:#ffd400;box-shadow:4px 4px #814520}.vault-treasure-art,.stage-award-item{position:relative;display:block;overflow:hidden;isolation:isolate}.vault-treasure-art{width:86px;height:86px;filter:grayscale(1) brightness(.28);opacity:.52}.vault-item.is-owned .vault-treasure-art{filter:none;opacity:1}.vault-treasure-art img,.stage-award-item img{position:absolute;display:block;width:200%!important;height:200%!important;max-width:none!important;object-fit:fill;image-rendering:pixelated}.vault-volcano img{left:0;top:0}.vault-beach img{left:-100%;top:0}.vault-forest img{left:0;top:-100%}.vault-mountain img{left:-100%;top:-100%}.vault-item small{display:block;color:#6f6556;font-size:8px}.vault-item.is-owned small{color:#8affb8}.vault-item strong{display:block;margin-top:6px;font-size:14px;line-height:1.35}.vault-item em{display:block;margin-top:6px;color:#71401f;font-style:normal;font-size:8px}.vault-item.is-owned em{color:#ffd400}.treasure-vault-title{margin-top:14px;padding:12px;background:#21170d;color:#fff;text-align:center;font-size:10px}.treasure-vault-title b{display:block;margin-top:5px;color:#8affb8;font-size:17px}
+    .treasure-vault-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.vault-item{display:grid;grid-template-columns:86px 1fr;align-items:center;gap:10px;min-height:116px;padding:11px;background:#f1ead4;border:4px solid #8b7c68}.vault-item.is-owned{background:#173c2d;color:#fff;border-color:#ffd400;box-shadow:4px 4px #814520}.vault-treasure-art,.stage-award-item{display:block}.vault-treasure-art{width:86px;height:86px;filter:grayscale(1) brightness(.28);opacity:.52}.vault-item.is-owned .vault-treasure-art{filter:none;opacity:1}.vault-treasure-art img,.stage-award-item img{display:block;width:100%!important;height:100%!important;max-width:none!important;object-fit:contain;image-rendering:pixelated}.vault-item small{display:block;color:#6f6556;font-size:8px}.vault-item.is-owned small{color:#8affb8}.vault-item strong{display:block;margin-top:6px;font-size:14px;line-height:1.35}.vault-item em{display:block;margin-top:6px;color:#71401f;font-style:normal;font-size:8px}.vault-item.is-owned em{color:#ffd400}.treasure-vault-title{margin-top:14px;padding:12px;background:#21170d;color:#fff;text-align:center;font-size:10px}.treasure-vault-title b{display:block;margin-top:5px;color:#8affb8;font-size:17px}
     @media(max-width:560px){.treasure-vault-panel{padding:11px;border-width:5px}.treasure-vault-grid{grid-template-columns:1fr}.vault-item{grid-template-columns:74px 1fr;min-height:94px}.vault-treasure-art{width:68px;height:68px}.treasure-vault-head strong{font-size:17px}.treasure-vault-close{width:38px;height:38px}}
   `;
   document.head.append(coinStyle);
@@ -247,13 +247,14 @@
   stageAwardOverlay.className = 'stage-award-overlay';
   stageAwardOverlay.setAttribute('role', 'status');
   stageAwardOverlay.setAttribute('aria-live', 'polite');
-  stageAwardOverlay.innerHTML = '<div class="stage-award-card"><small>STAGE CLEAR / TREASURE GET!</small><span class="stage-award-item" aria-hidden="true"><img src="/public/treasure-collection-sprite-v1.png?v=2" alt=""></span><strong></strong><p></p><b>財宝を獲得！</b></div>';
+  stageAwardOverlay.innerHTML = '<div class="stage-award-card"><small>STAGE CLEAR / TREASURE GET!</small><span class="stage-award-item" aria-hidden="true"><img alt=""></span><strong></strong><p></p><b>財宝を獲得！</b></div>';
   document.body.append(stageAwardOverlay);
   let stageAwardTimer;
   const showStageTreasureAward = stage => {
     clearTimeout(stageAwardTimer);
     const stageAwardArt = stageAwardOverlay.querySelector('.stage-award-item');
-    stageAwardArt.className = 'stage-award-item vault-' + stage.id;
+    stageAwardArt.className = 'stage-award-item';
+    stageAwardArt.querySelector('img').src = '/public/treasure-' + stage.id + '-v1.png?v=1';
     stageAwardOverlay.querySelector('strong').textContent = stage.treasure;
     stageAwardOverlay.querySelector('p').textContent = stage.name + 'を完全攻略しました';
     stageAwardOverlay.classList.remove('is-show');
@@ -332,7 +333,7 @@
       const owned = Boolean(stageTreasures[stage.id]);
       const clearCount = countStageArticles(stage);
       const remaining = Math.max(0, stage.articles.length - clearCount);
-      return `<article class="vault-item${owned ? ' is-owned' : ''}"><span class="vault-treasure-art vault-${stage.id}" aria-hidden="true"><img src="/public/treasure-collection-sprite-v1.png?v=2" alt="" loading="eager"></span><div><small>ISLAND ${String(index + 1).padStart(2, '0')} / ${stage.name}</small><strong>${owned ? stage.treasure : '？？？'}</strong><em>${owned ? 'TREASURE GET!' : `あと${remaining}記事で解放`}</em></div></article>`;
+      return `<article class="vault-item${owned ? ' is-owned' : ''}"><span class="vault-treasure-art" aria-hidden="true"><img src="/public/treasure-${stage.id}-v1.png?v=1" alt="" loading="eager"></span><div><small>ISLAND ${String(index + 1).padStart(2, '0')} / ${stage.name}</small><strong>${owned ? stage.treasure : '？？？'}</strong><em>${owned ? 'TREASURE GET!' : `あと${remaining}記事で解放`}</em></div></article>`;
     }).join('');
     treasureVaultTitle.innerHTML = treasureHunter
       ? 'EQUIPPED TITLE<b>TREASURE HUNTER</b>'
