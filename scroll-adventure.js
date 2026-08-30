@@ -142,6 +142,13 @@
     .stage-award-card{width:min(90vw,430px);background:#10241b;color:#fff;border:6px solid #ffd400;box-shadow:10px 10px #814520;padding:24px 19px;text-align:center;font-family:"Courier New",monospace;transform:translateY(24px) scale(.8);transition:transform .36s steps(5,end)}.stage-award-overlay.is-show .stage-award-card{transform:translateY(0) scale(1)}
     .stage-award-card .treasure-sprite{background-position:100% 0}.stage-award-card small{display:block;color:#8affb8;font-size:9px;letter-spacing:.12em}.stage-award-card strong{display:block;color:#fff36a;font-size:clamp(23px,7vw,36px);line-height:1.1;text-shadow:4px 4px #814520}.stage-award-card p{margin:9px 0 0;font:800 12px/1.6 "Yu Gothic",sans-serif}.stage-award-card b{display:inline-block;margin-top:12px;padding:7px 10px;background:#ffd400;color:#111;font-size:10px}
     .hunter-overlay .master-card{border-color:#8affb8;box-shadow:10px 10px #064f2e}.hunter-overlay .master-card strong{color:#8affb8}.hunter-overlay .master-card b{background:#06c755;color:#fff}
+    .adventure-book{pointer-events:auto;cursor:pointer;text-align:left;appearance:none;-webkit-appearance:none}.adventure-book:after{content:"TAP ▶ 宝物庫";display:block;margin-top:6px;color:#ffd76a;font-size:7px}.adventure-book:focus-visible{outline:4px solid #fff;outline-offset:4px}.treasure-vault-open{overflow:hidden}
+    .treasure-vault{position:fixed;inset:0;z-index:150;display:grid;place-items:center;padding:16px;background:#000c;opacity:0;visibility:hidden;transition:opacity .16s steps(2,end)}.treasure-vault.is-show{opacity:1;visibility:visible}
+    .treasure-vault-panel{width:min(94vw,760px);max-height:min(88vh,760px);overflow:auto;background:#fff7d4;color:#21170d;border:6px solid #ffd400;box-shadow:11px 11px #814520;padding:18px;font-family:"Courier New",monospace;transform:scale(.88);transition:transform .28s steps(4,end)}.treasure-vault.is-show .treasure-vault-panel{transform:scale(1)}
+    .treasure-vault-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 14px;background:#173c2d;color:#fff}.treasure-vault-head small{display:block;color:#8affb8;font-size:8px}.treasure-vault-head strong{display:block;margin-top:4px;color:#ffd400;font-size:20px}.treasure-vault-close{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;background:#ffd400;color:#111;border:4px solid #fff;font:900 24px/1 "Courier New",monospace;cursor:pointer}
+    .treasure-vault-summary{margin:13px 0;padding:10px;background:#fff;color:#173c2d;border:3px solid #71401f;text-align:center;font-size:11px}.treasure-vault-summary b{color:#0a7140}
+    .treasure-vault-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.vault-item{display:grid;grid-template-columns:86px 1fr;align-items:center;gap:10px;min-height:116px;padding:11px;background:#f1ead4;border:4px solid #8b7c68}.vault-item.is-owned{background:#173c2d;color:#fff;border-color:#ffd400;box-shadow:4px 4px #814520}.vault-chest{display:block;width:80px;height:72px;background:url("/public/treasure-chest-v1.png") 0 center/200% 100% no-repeat;image-rendering:pixelated;filter:grayscale(1);opacity:.42}.vault-item.is-owned .vault-chest{background-position:100% center;filter:none;opacity:1}.vault-item small{display:block;color:#6f6556;font-size:8px}.vault-item.is-owned small{color:#8affb8}.vault-item strong{display:block;margin-top:6px;font-size:14px;line-height:1.35}.vault-item em{display:block;margin-top:6px;color:#71401f;font-style:normal;font-size:8px}.vault-item.is-owned em{color:#ffd400}.treasure-vault-title{margin-top:14px;padding:12px;background:#21170d;color:#fff;text-align:center;font-size:10px}.treasure-vault-title b{display:block;margin-top:5px;color:#8affb8;font-size:17px}
+    @media(max-width:560px){.treasure-vault-panel{padding:11px;border-width:5px}.treasure-vault-grid{grid-template-columns:1fr}.vault-item{grid-template-columns:74px 1fr;min-height:94px}.vault-chest{width:68px;height:60px}.treasure-vault-head strong{font-size:17px}.treasure-vault-close{width:38px;height:38px}}
   `;
   document.head.append(coinStyle);
 
@@ -270,10 +277,27 @@
     hunterTimer = setTimeout(() => hunterOverlay.classList.remove('is-show'), 4200);
   };
 
-  const adventureBook = document.createElement('div');
+  const adventureBook = document.createElement('button');
+  adventureBook.type = 'button';
   adventureBook.className = 'adventure-book';
   adventureBook.setAttribute('aria-live', 'polite');
+  adventureBook.setAttribute('aria-haspopup', 'dialog');
+  adventureBook.setAttribute('aria-expanded', 'false');
+  adventureBook.setAttribute('aria-label', '冒険の書と宝物庫を開く');
   document.body.append(adventureBook);
+
+  const treasureVault = document.createElement('div');
+  treasureVault.className = 'treasure-vault';
+  treasureVault.setAttribute('role', 'dialog');
+  treasureVault.setAttribute('aria-modal', 'true');
+  treasureVault.setAttribute('aria-labelledby', 'treasure-vault-title');
+  treasureVault.setAttribute('aria-hidden', 'true');
+  treasureVault.innerHTML = '<div class="treasure-vault-panel"><div class="treasure-vault-head"><div><small>ADVENTURE TREASURE</small><strong id="treasure-vault-title">宝物庫</strong></div><button class="treasure-vault-close" type="button" aria-label="宝物庫を閉じる">×</button></div><div class="treasure-vault-summary"></div><div class="treasure-vault-grid"></div><div class="treasure-vault-title"></div></div>';
+  document.body.append(treasureVault);
+  const treasureVaultGrid = treasureVault.querySelector('.treasure-vault-grid');
+  const treasureVaultSummary = treasureVault.querySelector('.treasure-vault-summary');
+  const treasureVaultTitle = treasureVault.querySelector('.treasure-vault-title');
+  const treasureVaultClose = treasureVault.querySelector('.treasure-vault-close');
 
   let articleRosterReady = false;
   const countArticleClears = () => articlePaths.filter(articlePath => articleClears[articlePath]).length;
@@ -299,6 +323,45 @@
   };
 
   const countStageArticles = stage => stage.articles.filter(articlePath => articleClears[articlePath]).length;
+  const paintTreasureVault = () => {
+    const ownedCount = STAGE_QUESTS.filter(stage => stageTreasures[stage.id]).length;
+    treasureVaultSummary.innerHTML = `TREASURE <b>${ownedCount} / ${STAGE_QUESTS.length}</b>`;
+    treasureVaultGrid.innerHTML = STAGE_QUESTS.map((stage, index) => {
+      const owned = Boolean(stageTreasures[stage.id]);
+      const clearCount = countStageArticles(stage);
+      const remaining = Math.max(0, stage.articles.length - clearCount);
+      return `<article class="vault-item${owned ? ' is-owned' : ''}"><span class="vault-chest" aria-hidden="true"></span><div><small>ISLAND ${String(index + 1).padStart(2, '0')} / ${stage.name}</small><strong>${owned ? stage.treasure : '？？？'}</strong><em>${owned ? 'TREASURE GET!' : `あと${remaining}記事で解放`}</em></div></article>`;
+    }).join('');
+    treasureVaultTitle.innerHTML = treasureHunter
+      ? 'EQUIPPED TITLE<b>TREASURE HUNTER</b>'
+      : `称号解放まで あと${STAGE_QUESTS.length - ownedCount}個<b>TREASURE HUNTER 🔒</b>`;
+  };
+
+  let treasureVaultLastFocus = null;
+  const openTreasureVault = () => {
+    paintTreasureVault();
+    treasureVaultLastFocus = document.activeElement;
+    treasureVault.classList.add('is-show');
+    treasureVault.setAttribute('aria-hidden', 'false');
+    adventureBook.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('treasure-vault-open');
+    setTimeout(() => treasureVaultClose.focus(), 40);
+  };
+  const closeTreasureVault = () => {
+    treasureVault.classList.remove('is-show');
+    treasureVault.setAttribute('aria-hidden', 'true');
+    adventureBook.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('treasure-vault-open');
+    if (treasureVaultLastFocus?.focus) treasureVaultLastFocus.focus();
+  };
+  adventureBook.addEventListener('click', openTreasureVault);
+  treasureVaultClose.addEventListener('click', closeTreasureVault);
+  treasureVault.addEventListener('pointerdown', event => {
+    if (event.target === treasureVault) closeTreasureVault();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && treasureVault.classList.contains('is-show')) closeTreasureVault();
+  });
   const paintStageTreasures = (announce = false) => {
     const newlyAwarded = [];
     STAGE_QUESTS.forEach((stage, index) => {
@@ -336,6 +399,7 @@
       try { localStorage.setItem(HUNTER_KEY, '1'); } catch {}
     }
     adventureBook?.classList.toggle('is-hunter', treasureHunter);
+    paintTreasureVault();
 
     if (announce && newlyAwarded.length) {
       const latest = newlyAwarded[newlyAwarded.length - 1];
