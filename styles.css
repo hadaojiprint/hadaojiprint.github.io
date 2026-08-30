@@ -224,3 +224,8 @@ footer{background:#132e25;border-top-color:var(--sand)}
 /* Improve LINE menu contrast */
 .site-menu nav .menu-line{color:#17130c}
 .site-menu nav .menu-line>b{color:#17130c}
+
+
+/* Stage treasure quest introduction */
+.stage-treasure-lead{max-width:780px;margin:-42px auto 34px;padding:12px 15px;background:#173c2d;color:#fff36a;border:4px solid #71401f;box-shadow:5px 5px #d7aa32;text-align:center;font-family:"Yu Gothic",sans-serif;font-size:13px;font-weight:900;line-height:1.7}
+@media(max-width:620px){.stage-treasure-lead{margin:-28px auto 27px;padding:10px 11px;font-size:11px}}
