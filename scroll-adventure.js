@@ -119,6 +119,14 @@
     .article-list article.is-cleared{outline:4px solid #159447;outline-offset:-4px}.article-list article.is-cleared .level{color:#0a6d36}.article-list article.is-cleared a{background:#159447;color:#fff}
     .scroll-walker{position:fixed;right:22px;bottom:82px;z-index:108;width:94px;height:141px;padding:0;border:0;background:transparent;cursor:pointer;transform-origin:center bottom;-webkit-tap-highlight-color:transparent}
     .walker-sprite{display:block;width:100%;height:100%;background-repeat:no-repeat;background-size:500% 100%;background-position:0 0;image-rendering:pixelated}
+    .walker-effects{position:fixed;right:0;bottom:68px;z-index:107;width:230px;height:210px;overflow:visible;pointer-events:none}
+    .walker-effect{position:absolute;display:block;background-repeat:no-repeat;background-position:center;background-size:contain;image-rendering:pixelated;will-change:transform,opacity}
+    .walker-bat{left:210px;top:var(--bat-y,55px);width:46px;height:36px;background-image:url("/public/pixel-bat-v1.png?v=1");animation:walker-bat-cross var(--bat-speed,1.25s) steps(12,end) forwards}
+    .walker-stone{left:150px;top:178px;width:24px;height:24px;background-image:url("/public/pixel-stone-v1.png?v=1");animation:walker-stone-trail .95s steps(9,end) forwards}
+    .walker-dust{left:153px;top:186px;width:7px;height:7px;background:#c49a61;box-shadow:9px 3px #e1bf83,-7px 7px #8f6946;animation:walker-dust-fade .48s steps(5,end) forwards}
+    @keyframes walker-bat-cross{0%{transform:translate(0,8px) scale(.72);opacity:0}12%{opacity:1}35%{transform:translate(-70px,-8px) scale(.92) rotate(-5deg)}65%{transform:translate(-150px,10px) scale(1) rotate(4deg)}100%{transform:translate(-270px,-18px) scale(.78) rotate(-6deg);opacity:0}}
+    @keyframes walker-stone-trail{0%{transform:translate(0,0) scale(1) rotate(0);opacity:1}60%{opacity:.9}100%{transform:translate(var(--stone-x,-34px),-98px) scale(.16) rotate(540deg);opacity:0}}
+    @keyframes walker-dust-fade{0%{transform:translate(0,0) scale(1);opacity:.85}100%{transform:translate(var(--dust-x,-18px),-24px) scale(.2);opacity:0}}
     .scroll-walker:focus-visible{outline:4px solid #ffd400;outline-offset:4px}
     .scroll-walker.is-walking{animation:walker-bob .34s steps(2,end) infinite}
     .scroll-walker.is-walking .walker-sprite{animation:walker-feet .34s steps(1,end) infinite}
@@ -132,8 +140,8 @@
     @keyframes walker-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
     @keyframes walker-jump{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-28px) scale(1.04)}70%{transform:translateY(-9px) scale(.98)}}
     @keyframes walker-double-jump{0%,100%{transform:translateY(0)}20%,65%{transform:translateY(-24px) rotate(-3deg)}38%,82%{transform:translateY(0) rotate(3deg)}}
-    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}.treasure-card{padding:16px 14px}.treasure-sprite{width:112px;height:112px}.treasure-card strong{font-size:18px}.master-card{padding:22px 14px}.master-card strong{font-size:30px}}
-    @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite{animation:none!important;transition:none!important}.page-transition{transition:none!important}.transition-dots:after{animation:none;content:"..."}.master-stars{animation:none}}
+    @media(max-width:760px){.coin-hud-float{top:74px;right:8px;font-size:10px;padding:7px 9px}.coin-toast{width:min(86vw,340px);top:14%}.adventure-book{left:8px;bottom:70px;padding:7px 9px}.scroll-walker{right:10px;bottom:72px;width:68px;height:102px}.walker-effects{right:0;bottom:66px;width:172px;height:154px}.walker-bat{left:155px;width:36px;height:28px}.walker-stone{left:118px;top:132px;width:18px;height:18px}.walker-dust{left:120px;top:138px}.treasure-card{padding:16px 14px}.treasure-sprite{width:112px;height:112px}.treasure-card strong{font-size:18px}.master-card{padding:22px 14px}.master-card strong{font-size:30px}}
+    @media(prefers-reduced-motion:reduce){.scroll-walker,.walker-sprite,.walker-effect{animation:none!important;transition:none!important}.walker-effects{display:none}.page-transition{transition:none!important}.transition-dots:after{animation:none;content:"..."}.master-stars{animation:none}}
     .stage-treasure-progress{margin:13px 0 2px;padding:9px 8px;background:#fff7d4;color:#21170d;border:3px solid #71401f;text-align:left;font-family:"Courier New",monospace}
     .stage-treasure-progress small{display:block;color:#0a7140;font-size:8px}.stage-treasure-progress b{display:block;margin-top:4px;font-size:11px}.stage-treasure-progress em{display:block;margin-top:4px;color:#71401f;font-style:normal;font-size:9px}
     .stage-grid article.is-stage-clear{outline:5px solid #ffd400;outline-offset:-5px}.stage-grid article.is-stage-clear .stage-treasure-progress{background:#173c2d;color:#fff;border-color:#ffd400}.stage-grid article.is-stage-clear .stage-treasure-progress small,.stage-grid article.is-stage-clear .stage-treasure-progress em{color:#ffd400}
@@ -202,7 +210,69 @@
     reactionTimer = setTimeout(() => walker.classList.remove(className), duration);
   };
   paintWalker();
+
+  const effectLayer = document.createElement('div');
+  effectLayer.className = 'walker-effects';
+  effectLayer.setAttribute('aria-hidden', 'true');
+  document.body.append(effectLayer);
   document.body.append(walker);
+
+  let lastEffectScrollY = scrollY;
+  let stoneDistance = 0;
+  let batDistance = 0;
+  let nextBatDistance = 900 + Math.random() * 900;
+  let lastStoneTime = 0;
+
+  const removeEffect = effect => {
+    effect.addEventListener('animationend', () => effect.remove(), {once: true});
+  };
+
+  const spawnStoneTrail = () => {
+    if (reduceMotion || document.hidden || effectLayer.querySelectorAll('.walker-stone').length >= (innerWidth <= 760 ? 2 : 3)) return;
+    const stone = document.createElement('span');
+    stone.className = 'walker-effect walker-stone';
+    stone.style.setProperty('--stone-x', (Math.round(Math.random() * 70) - 52) + 'px');
+    effectLayer.append(stone);
+    removeEffect(stone);
+
+    const dust = document.createElement('span');
+    dust.className = 'walker-effect walker-dust';
+    dust.style.setProperty('--dust-x', (Math.round(Math.random() * 34) - 25) + 'px');
+    effectLayer.append(dust);
+    removeEffect(dust);
+  };
+
+  const spawnBat = () => {
+    if (reduceMotion || document.hidden || effectLayer.querySelectorAll('.walker-bat').length >= (innerWidth <= 760 ? 1 : 2)) return;
+    const bat = document.createElement('span');
+    bat.className = 'walker-effect walker-bat';
+    bat.style.setProperty('--bat-y', (innerWidth <= 760 ? 18 + Math.random() * 62 : 22 + Math.random() * 90) + 'px');
+    bat.style.setProperty('--bat-speed', (1.05 + Math.random() * .55) + 's');
+    effectLayer.append(bat);
+    removeEffect(bat);
+    if (Math.random() < .28) setTimeout(() => playWalkerReaction('is-jumping', 520), 260);
+  };
+
+  const updateTravelEffects = () => {
+    const travelled = Math.max(0, Math.min(260, scrollY - lastEffectScrollY));
+    lastEffectScrollY = scrollY;
+    if (!travelled || reduceMotion) return;
+    stoneDistance += travelled;
+    batDistance += travelled;
+    const now = performance.now();
+
+    if (stoneDistance >= (innerWidth <= 760 ? 150 : 115) && now - lastStoneTime > 180) {
+      stoneDistance = 0;
+      lastStoneTime = now;
+      spawnStoneTrail();
+    }
+    if (batDistance >= nextBatDistance) {
+      batDistance = 0;
+      nextBatDistance = 900 + Math.random() * 1100;
+      spawnBat();
+      if (innerWidth > 760 && Math.random() < .24) setTimeout(spawnBat, 180);
+    }
+  };
 
   const coinToast = document.createElement('div');
   coinToast.className = 'coin-toast';
@@ -674,6 +744,7 @@
   let walkTimer;
   addEventListener('scroll', () => {
     walker.classList.add('is-walking');
+    updateTravelEffects();
     clearTimeout(walkTimer);
     walkTimer = setTimeout(() => walker.classList.remove('is-walking'), 140);
     if (!ticking) {
