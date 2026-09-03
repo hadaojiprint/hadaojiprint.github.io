@@ -3,6 +3,7 @@ import json
 import os
 from datetime import date, timedelta
 from pathlib import Path
+from xml.etree import ElementTree
 
 import google.auth
 from googleapiclient.discovery import build
@@ -12,9 +13,13 @@ OUT_DIR = Path("gsc-report")
 OUT_DIR.mkdir(exist_ok=True)
 
 SECTIONS = {
+    "articles": "https://hadaojiprint.github.io/articles/",
+    "prices": "https://hadaojiprint.github.io/prices/",
+    "works": "https://hadaojiprint.github.io/works/",
+    "estimate": "https://hadaojiprint.github.io/estimate/",
     "lp": "https://hadaojiprint.github.io/lp/",
-    "lab": "https://hadaojiprint.github.io/wearprint-lab/",
     "corporate": "https://hadaojiprint.github.io/corporate/",
+    "platform": "https://hadaojiprint.github.io/platform/",
 }
 
 
@@ -129,6 +134,48 @@ def save_report(name, report):
     write_dimension_csv(report_dir / "pages.csv", report["pages"], "page")
 
 
+
+def local_sitemap_urls(path="sitemap.xml"):
+    tree = ElementTree.parse(path)
+    namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    return [
+        node.text.strip()
+        for node in tree.findall(".//sm:loc", namespace)
+        if node.text and node.text.strip()
+    ]
+
+
+def fetch_sitemap_status(service, site_url):
+    response = service.sitemaps().list(siteUrl=site_url).execute()
+    return response.get("sitemap", [])
+
+
+def inspect_index_status(service, site_url, urls):
+    results = []
+    for url in urls:
+        try:
+            response = service.urlInspection().index().inspect(
+                body={"inspectionUrl": url, "siteUrl": site_url}
+            ).execute()
+            result = response.get("inspectionResult", {})
+            index_status = result.get("indexStatusResult", {})
+            results.append({
+                "url": url,
+                "verdict": index_status.get("verdict"),
+                "coverage_state": index_status.get("coverageState"),
+                "robots_txt_state": index_status.get("robotsTxtState"),
+                "indexing_state": index_status.get("indexingState"),
+                "last_crawl_time": index_status.get("lastCrawlTime"),
+                "page_fetch_state": index_status.get("pageFetchState"),
+                "google_canonical": index_status.get("googleCanonical"),
+                "user_canonical": index_status.get("userCanonical"),
+                "referring_urls": index_status.get("referringUrls", []),
+                "sitemap": index_status.get("sitemap", []),
+            })
+        except Exception as exc:
+            results.append({"url": url, "error": str(exc)})
+    return results
+
 def main():
     requested_site = os.environ["GSC_SITE_URL"]
     credentials, _ = google.auth.default(scopes=SCOPES)
@@ -166,12 +213,18 @@ def main():
         save_report(name, report)
         section_summaries[name] = report["summary"]
 
+    sitemap_urls = local_sitemap_urls()
+    sitemap_status = fetch_sitemap_status(service, site_url)
+    index_inspection = inspect_index_status(service, site_url, sitemap_urls)
+
     dashboard = {
         "site": site_url,
         "generated_at": date.today().isoformat(),
         "period": {"start": current_start.isoformat(), "end": current_end.isoformat()},
         "all": all_report["summary"],
         "sections": section_summaries,
+        "sitemaps": sitemap_status,
+        "index_inspection": index_inspection,
     }
     (OUT_DIR / "dashboard.json").write_text(
         json.dumps(dashboard, ensure_ascii=False, indent=2), encoding="utf-8"
