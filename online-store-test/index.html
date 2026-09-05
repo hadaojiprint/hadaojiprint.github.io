@@ -38,30 +38,12 @@ function randomRoom(){const bytes=new Uint8Array(12);crypto.getRandomValues(byte
 function sanitizeRoom(v){return(v||'').trim().replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80)}
 function updateShare(room){const url=new URL(location.href);url.searchParams.set('room',room);shareUrlEl.textContent=url.toString();shareBox.style.display='block';directJitsi.href='https://meet.jit.si/'+encodeURIComponent(room);fallbackBox.style.display='flex'}
 function ensureRoom(){let room=sanitizeRoom(roomInput.value);if(!room){room=randomRoom();roomInput.value=room}updateShare(room);return room}
-async function requestMedia(){
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){permStatus.textContent='このブラウザではカメラ・マイク確認に対応していません。Safariで開いてください。';return false}
-  permStatus.textContent='カメラ・マイクの許可を確認中…';
-  try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});stream.getTracks().forEach(t=>t.stop());mediaGranted=true;permissionTest.textContent='接続OK ✓';permissionTest.className='success';permStatus.textContent='カメラ・マイクの接続確認OKです。次にオンライン店舗へ入ってください。';return true}
-  catch(e){mediaGranted=false;permStatus.textContent='許可できませんでした。iPhoneの設定またはSafariのサイト設定でカメラ・マイクを「許可」にしてください。';return false}
-}
+async function requestMedia(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){permStatus.textContent='このブラウザではカメラ・マイク確認に対応していません。Safariで開いてください。';return false}permStatus.textContent='カメラ・マイクの許可を確認中…';try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});stream.getTracks().forEach(t=>t.stop());mediaGranted=true;permissionTest.textContent='接続OK ✓';permissionTest.className='success';permStatus.textContent='カメラ・マイクの接続確認OKです。次にオンライン店舗へ入ってください。';return true}catch(e){mediaGranted=false;permStatus.textContent='許可できませんでした。iPhoneの設定またはSafariのサイト設定でカメラ・マイクを「許可」にしてください。';return false}}
 permissionTest.addEventListener('click',requestMedia);
 newBtn.addEventListener('click',()=>{const room=randomRoom();roomInput.value=room;updateShare(room);status.textContent='新しい来店ルームを作成しました。'});
 copyBtn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(shareUrlEl.textContent);copyBtn.textContent='コピーしました';setTimeout(()=>copyBtn.textContent='リンクをコピー',1600)}catch(e){status.textContent='コピーできませんでした。リンクを長押ししてコピーしてください。'}});
-joinBtn.addEventListener('click',async()=>{
-  const room=ensureRoom();
-  if(!mediaGranted){const ok=await requestMedia();if(!ok){status.textContent='カメラ・マイクの許可が必要です。直接Jitsiを開く方法も試せます。';return}}
-  const displayName=(nameInput.value||'').trim()||'HADAOJI ONLINE STORE';
-  if(typeof JitsiMeetExternalAPI==='undefined'){status.textContent='通話機能の読み込みに失敗しました。「Jitsiを直接開く」を試してください。';return}
-  if(api){api.dispose();api=null}meeting.innerHTML='';meeting.classList.add('active');status.textContent='オンライン店舗へ接続中…';
-  const meetingHeight=window.innerWidth<=640?Math.max(520,Math.round(window.innerHeight*.72)):620;
-  api=new JitsiMeetExternalAPI('meet.jit.si',{roomName:room,parentNode:meeting,width:'100%',height:meetingHeight,lang:'ja',userInfo:{displayName},configOverwrite:{prejoinPageEnabled:false,startWithAudioMuted:false,startWithVideoMuted:false,disableDeepLinking:true,disableSelfView:false,useHostPageLocalStorage:true},interfaceConfigOverwrite:{TILE_VIEW_MAX_COLUMNS:2}});
-  try{const frame=api.getIFrame();frame.setAttribute('allow','camera; microphone; fullscreen; display-capture; autoplay');frame.setAttribute('playsinline','true')}catch(e){}
-  api.addEventListener('videoConferenceJoined',()=>{try{api.executeCommand('setTileView',true)}catch(e){}status.textContent='入店しました。自分の映像とマイクを確認してください。'});
-  api.addEventListener('cameraError',()=>{status.textContent='Jitsi側でカメラを取得できません。「Jitsiを直接開く」を試してください。'});
-  api.addEventListener('micError',()=>{status.textContent='Jitsi側でマイクを取得できません。「Jitsiを直接開く」を試してください。'});
-  api.addEventListener('readyToClose',()=>{status.textContent='通話を終了しました。';meeting.classList.remove('active')});
-});
+joinBtn.addEventListener('click',async()=>{const room=ensureRoom();if(!mediaGranted){const ok=await requestMedia();if(!ok){status.textContent='カメラ・マイクの許可が必要です。直接Jitsiを開く方法も試せます。';return}}const displayName=(nameInput.value||'').trim()||'HADAOJI ONLINE STORE';if(typeof JitsiMeetExternalAPI==='undefined'){status.textContent='通話機能の読み込みに失敗しました。「Jitsiを直接開く」を試してください。';return}if(api){api.dispose();api=null}meeting.innerHTML='';meeting.classList.add('active');status.textContent='オンライン店舗へ接続中…';const meetingHeight=window.innerWidth<=640?Math.max(520,Math.round(window.innerHeight*.72)):620;api=new JitsiMeetExternalAPI('meet.jit.si',{roomName:room,parentNode:meeting,width:'100%',height:meetingHeight,lang:'ja',userInfo:{displayName},configOverwrite:{prejoinPageEnabled:false,startWithAudioMuted:false,startWithVideoMuted:false,disableDeepLinking:true,disableSelfView:false,useHostPageLocalStorage:true},interfaceConfigOverwrite:{TILE_VIEW_MAX_COLUMNS:2}});try{const frame=api.getIFrame();frame.setAttribute('allow','camera; microphone; fullscreen; display-capture; autoplay');frame.setAttribute('playsinline','true')}catch(e){}api.addEventListener('videoConferenceJoined',()=>{try{api.executeCommand('setTileView',true)}catch(e){}status.textContent='入店しました。自分の映像とマイクを確認してください。'});api.addEventListener('cameraError',()=>{status.textContent='Jitsi側でカメラを取得できません。「Jitsiを直接開く」を試してください。'});api.addEventListener('micError',()=>{status.textContent='Jitsi側でマイクを取得できません。「Jitsiを直接開く」を試してください。'});api.addEventListener('readyToClose',()=>{status.textContent='通話を終了しました。';meeting.classList.remove('active')});});
 const params=new URLSearchParams(location.search),fromUrl=sanitizeRoom(params.get('room'));if(fromUrl){roomInput.value=fromUrl;updateShare(fromUrl);status.textContent='来店ルームを読み込みました。まずカメラ・マイクを許可してください。'}
 </script>
-<script src="./virtual-background.js"></script>
+<script src="./virtual-background-v2.js"></script>
 </body></html>
