@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>HADAOJI ONLINE STORE｜来店テスト</title>
+  <meta name="theme-color" content="#121212">
+  <style>
+    :root{--bg:#111;--panel:#1b1b1b;--ink:#f7f3df;--yellow:#ffd84a;--green:#38d39f;--line:#3b3b3b}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+    .wrap{width:min(1100px,100%);margin:auto;padding:18px}
+    .pixel{image-rendering:pixelated}
+    header{border:4px solid var(--yellow);background:#181818;padding:16px;box-shadow:8px 8px 0 #000;margin-bottom:16px}
+    h1{font-size:clamp(22px,5vw,38px);margin:0 0 6px;letter-spacing:.04em}
+    .sub{margin:0;color:#d7d2bd;line-height:1.6}
+    .badge{display:inline-block;background:var(--yellow);color:#111;font-weight:800;padding:4px 8px;margin-bottom:8px;font-size:12px}
+    .shop{position:relative;border:4px solid #515151;background:linear-gradient(#28211b 0 20%,#403328 20% 26%,#262626 26% 100%);padding:16px;min-height:240px;overflow:hidden}
+    .shop:before{content:"HADAOJI PRINT";display:block;width:max-content;margin:0 auto 14px;padding:8px 14px;background:#0e0e0e;border:3px solid var(--yellow);color:var(--yellow);font-weight:900;letter-spacing:.12em;box-shadow:4px 4px 0 #000}
+    .counter{border-top:12px solid #765637;background:#4b3526;padding:14px 12px 10px;box-shadow:0 -4px 0 #2e2118 inset}
+    .setup{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:700px;margin:0 auto}
+    label{font-size:13px;color:#d8d2c2}
+    input{width:100%;margin-top:5px;padding:12px;border:2px solid #555;background:#111;color:#fff;border-radius:4px;font-size:16px}
+    button{appearance:none;border:0;padding:13px 16px;font-weight:800;font-size:15px;cursor:pointer;border-radius:4px}
+    .primary{background:var(--yellow);color:#111}
+    .secondary{background:#2d2d2d;color:#fff;border:2px solid #555}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    .note{max-width:720px;margin:12px auto 0;font-size:13px;line-height:1.7;color:#d4cfbd}
+    #meeting{margin-top:16px;border:4px solid var(--yellow);background:#000;min-height:0}
+    #meeting.active{min-height:620px}
+    #shareBox{display:none;margin-top:12px;padding:12px;border:2px dashed var(--green);background:#10221c;word-break:break-all}
+    #shareBox strong{color:var(--green)}
+    .status{margin-top:10px;text-align:center;font-size:13px;color:#aaa}
+    .footer{margin-top:16px;color:#aaa;font-size:12px;text-align:center}
+    @media(max-width:640px){.wrap{padding:10px}.setup{grid-template-columns:1fr}.shop{padding:10px}#meeting.active{min-height:72vh}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <span class="badge">TEST / 非公開導線</span>
+      <h1>HADAOJI ONLINE STORE</h1>
+      <p class="sub">ネットの中のプリント屋へようこそ。予約したお客さまと、画面を見ながら一緒にTシャツを作るための通話テストページです。</p>
+    </header>
+
+    <section class="shop" aria-label="オンライン店舗テスト">
+      <div class="counter">
+        <div class="setup">
+          <label>お名前
+            <input id="displayName" maxlength="40" autocomplete="name" placeholder="例：はずみ / お客様名">
+          </label>
+          <label>ルームID
+            <input id="roomName" maxlength="80" autocapitalize="off" spellcheck="false" placeholder="自動生成できます">
+          </label>
+        </div>
+        <div class="actions">
+          <button class="secondary" id="newRoom" type="button">新しい来店ルームを作る</button>
+          <button class="primary" id="join" type="button">オンライン店舗に入る</button>
+        </div>
+        <div id="shareBox"><strong>お客様用リンク</strong><br><span id="shareUrl"></span><div class="actions"><button class="secondary" id="copyLink" type="button">リンクをコピー</button></div></div>
+        <p class="note">テストではJitsi Meetのビデオ通話をこのページ内に埋め込みます。カメラ・マイクの許可が必要です。ルームURLを知っている人が参加できるため、本番運用では予約ごとに新しいルームIDを発行します。</p>
+        <div class="status" id="status">まだ通話は開始していません。</div>
+      </div>
+    </section>
+
+    <section id="meeting" aria-label="ビデオ通話"></section>
+    <div class="footer">HADAOJI PRINT / ONLINE STORE prototype</div>
+  </main>
+
+  <script src="https://meet.jit.si/external_api.js"></script>
+  <script>
+    const roomInput = document.getElementById('roomName');
+    const nameInput = document.getElementById('displayName');
+    const joinBtn = document.getElementById('join');
+    const newBtn = document.getElementById('newRoom');
+    const meeting = document.getElementById('meeting');
+    const status = document.getElementById('status');
+    const shareBox = document.getElementById('shareBox');
+    const shareUrlEl = document.getElementById('shareUrl');
+    const copyBtn = document.getElementById('copyLink');
+    let api = null;
+
+    function randomRoom(){
+      const bytes = new Uint8Array(12);
+      crypto.getRandomValues(bytes);
+      return 'hadaoji-' + Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+    }
+
+    function sanitizeRoom(v){
+      return (v || '').trim().replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80);
+    }
+
+    function updateShare(room){
+      const url = new URL(location.href);
+      url.searchParams.set('room', room);
+      shareUrlEl.textContent = url.toString();
+      shareBox.style.display = 'block';
+    }
+
+    function ensureRoom(){
+      let room = sanitizeRoom(roomInput.value);
+      if(!room){ room = randomRoom(); roomInput.value = room; }
+      return room;
+    }
+
+    newBtn.addEventListener('click',()=>{
+      const room = randomRoom();
+      roomInput.value = room;
+      updateShare(room);
+      status.textContent = '新しい来店ルームを作成しました。お客様へリンクを送れます。';
+    });
+
+    copyBtn.addEventListener('click', async()=>{
+      try{ await navigator.clipboard.writeText(shareUrlEl.textContent); copyBtn.textContent='コピーしました'; setTimeout(()=>copyBtn.textContent='リンクをコピー',1600); }
+      catch(e){ status.textContent='コピーできませんでした。リンクを長押ししてコピーしてください。'; }
+    });
+
+    joinBtn.addEventListener('click',()=>{
+      const room = ensureRoom();
+      const displayName = (nameInput.value || '').trim() || 'HADAOJI ONLINE STORE';
+      updateShare(room);
+      if(typeof JitsiMeetExternalAPI === 'undefined'){
+        status.textContent = '通話機能の読み込みに失敗しました。通信環境を確認してください。';
+        return;
+      }
+      if(api){ api.dispose(); api = null; }
+      meeting.innerHTML='';
+      meeting.classList.add('active');
+      status.textContent='オンライン店舗へ接続中…';
+      api = new JitsiMeetExternalAPI('meet.jit.si',{
+        roomName: room,
+        parentNode: meeting,
+        width: '100%',
+        height: '100%',
+        lang: 'ja',
+        userInfo: { displayName },
+        configOverwrite: {
+          prejoinPageEnabled: true,
+          startWithAudioMuted: false,
+          startWithVideoMuted: false,
+          disableDeepLinking: true
+        },
+        interfaceConfigOverwrite: {
+          TILE_VIEW_MAX_COLUMNS: 2
+        }
+      });
+      api.addEventListener('videoConferenceJoined',()=>{ status.textContent='入店しました。お客様の参加をお待ちください。'; });
+      api.addEventListener('participantJoined',()=>{ status.textContent='お客様が入店しました。'; });
+      api.addEventListener('readyToClose',()=>{ status.textContent='通話を終了しました。'; meeting.classList.remove('active'); });
+    });
+
+    const params = new URLSearchParams(location.search);
+    const fromUrl = sanitizeRoom(params.get('room'));
+    if(fromUrl){ roomInput.value=fromUrl; updateShare(fromUrl); status.textContent='来店ルームを読み込みました。「オンライン店舗に入る」を押してください。'; }
+  </script>
+</body>
+</html>
