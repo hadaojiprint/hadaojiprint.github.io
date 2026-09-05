@@ -145,7 +145,7 @@
           TILE_VIEW_MAX_COLUMNS: 2
         }
       });
-      api.addEventListener('videoConferenceJoined',()=>{ status.textContent='入店しました。お客様の参加をお待ちください。'; });
+      api.addEventListener('videoConferenceJoined',()=>{ status.textContent='入店しました。8BIT店舗背景のテストができます。'; });
       api.addEventListener('participantJoined',()=>{ status.textContent='お客様が入店しました。'; });
       api.addEventListener('readyToClose',()=>{ status.textContent='通話を終了しました。'; meeting.classList.remove('active'); });
     });
@@ -154,5 +154,6 @@
     const fromUrl = sanitizeRoom(params.get('room'));
     if(fromUrl){ roomInput.value=fromUrl; updateShare(fromUrl); status.textContent='来店ルームを読み込みました。「オンライン店舗に入る」を押してください。'; }
   </script>
+  <script src="./virtual-background.js"></script>
 </body>
 </html>
