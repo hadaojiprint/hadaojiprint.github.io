@@ -240,3 +240,18 @@ footer{background:#132e25;border-top-color:var(--sand)}
 .hero-failure-banner-copy strong em{color:var(--yellow);font-style:normal}
 .hero-failure-banner-arrow{color:var(--yellow);font-size:20px;animation:bob 1s steps(2) infinite}
 @media(max-width:620px){.hero-failure-banner{grid-template-columns:auto 1fr;gap:10px;margin-top:20px;padding:10px;box-shadow:5px 5px var(--yellow)}.hero-failure-banner-badge{min-width:48px;min-height:44px;font-size:9px}.hero-failure-banner-copy strong{font-size:20px}.hero-failure-banner-arrow{display:none}}
+
+
+/* Related articles: next quest */
+.next-quest{margin:34px 0 8px;padding:24px;background:#173c2d;color:#fff;border:5px solid #fff4b8;box-shadow:7px 7px #70401f}
+.next-quest-head{margin-bottom:17px;text-align:center}
+.next-quest-head small{display:inline-block;padding:6px 9px;background:#ffda45;color:#173c2d;border:3px solid #70401f;font-size:8px;letter-spacing:.12em}
+.next-quest-head h2{margin:12px 0 5px;color:#fff;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(27px,4vw,40px);line-height:1.1;letter-spacing:.04em}
+.next-quest-head p{margin:0;color:#fff7d4;font-family:"Yu Gothic",sans-serif;font-size:12px;font-weight:700}
+.next-quest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.next-quest-card{display:flex;flex-direction:column;min-height:145px;padding:17px 15px;background:#fff7d4;color:#21170d;border:4px solid #e9b943;box-shadow:4px 4px #0a1710;text-decoration:none;transition:transform .12s steps(2),box-shadow .12s steps(2)}
+.next-quest-card:hover,.next-quest-card:focus-visible{transform:translate(-2px,-2px);box-shadow:6px 6px #0a1710}
+.next-quest-card small{color:#0a7140;font-size:8px;letter-spacing:.08em}
+.next-quest-card strong{margin:9px 0 7px;font-family:"Yu Gothic",sans-serif;font-size:15px;line-height:1.55}
+.next-quest-card span{margin-top:auto;color:#70401f;font-size:9px;font-weight:900}
+@media(max-width:760px){.next-quest{padding:20px 14px;margin-top:27px}.next-quest-grid{grid-template-columns:1fr}.next-quest-card{min-height:0}.next-quest-head h2{font-size:29px}}
