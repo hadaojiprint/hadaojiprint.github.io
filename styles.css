@@ -229,3 +229,14 @@ footer{background:#132e25;border-top-color:var(--sand)}
 /* Stage treasure quest introduction */
 .stage-treasure-lead{max-width:780px;margin:-42px auto 34px;padding:12px 15px;background:#173c2d;color:#fff36a;border:4px solid #71401f;box-shadow:5px 5px #d7aa32;text-align:center;font-family:"Yu Gothic",sans-serif;font-size:13px;font-weight:900;line-height:1.7}
 @media(max-width:620px){.stage-treasure-lead{margin:-28px auto 27px;padding:10px 11px;font-size:11px}}
+
+
+/* Top hero: failure-story quest banner */
+.hero-failure-banner{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:13px;margin-top:24px;padding:12px 14px;background:#17100a;color:#fff;border:4px solid #fff;box-shadow:6px 6px var(--yellow);text-decoration:none;transition:transform .12s steps(2),box-shadow .12s steps(2)}
+.hero-failure-banner:hover,.hero-failure-banner:focus-visible{transform:translate(-2px,-2px);box-shadow:8px 8px var(--yellow)}
+.hero-failure-banner-badge{display:grid;place-items:center;min-width:54px;min-height:48px;padding:5px;background:#e43120;border:3px solid #000;color:#fff;font:900 10px/1.35 monospace;text-align:center;letter-spacing:.08em}
+.hero-failure-banner-copy small{display:block;margin-bottom:5px;color:var(--yellow);font:700 9px/1.2 monospace;letter-spacing:.15em}
+.hero-failure-banner-copy strong{display:block;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(19px,2vw,27px);line-height:1.05;letter-spacing:.05em}
+.hero-failure-banner-copy strong em{color:var(--yellow);font-style:normal}
+.hero-failure-banner-arrow{color:var(--yellow);font-size:20px;animation:bob 1s steps(2) infinite}
+@media(max-width:620px){.hero-failure-banner{grid-template-columns:auto 1fr;gap:10px;margin-top:20px;padding:10px;box-shadow:5px 5px var(--yellow)}.hero-failure-banner-badge{min-width:48px;min-height:44px;font-size:9px}.hero-failure-banner-copy strong{font-size:20px}.hero-failure-banner-arrow{display:none}}
