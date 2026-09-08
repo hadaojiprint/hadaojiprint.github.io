@@ -8,7 +8,7 @@
       <a href="/#top"><span>01</span><b>トップ</b><small>冒険島のスタート地点</small></a>
       <a href="/#guide"><span>02</span><b>初心者ガイド</b><small>Tシャツ作りの基本装備</small></a>
       <a href="/#topics"><span>03</span><b>島を選ぶ</b><small>テーマ別の攻略マップ</small></a>
-      <a href="/#articles"><span>04</span><b>記事一覧</b><small>全10ミッションを読む</small></a>
+      <a href="/#articles"><span>04</span><b>記事一覧</b><small>全15ミッションを読む</small></a>
       <a href="/prices/"><span>05</span><b>料金目安</b><small>プリントイメージで参考価格を見る</small></a>
       <a href="/works/"><span>06</span><b>制作事例</b><small>プリント装備を見る</small></a>
       <a href="/faq/"><span>07</span><b>よくある質問</b><small>冒険者の酒場で疑問を解決</small></a>
