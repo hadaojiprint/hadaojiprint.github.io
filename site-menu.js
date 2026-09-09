@@ -84,13 +84,19 @@
     button.addEventListener('click', () => setOpen(false))
   );
   menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
-  menu.querySelectorAll('.line-contact-link').forEach((link) =>
+  document.querySelectorAll('a[href^="https://lin.ee/"]').forEach((link) => {
+    if (link.dataset.gaLineTracked === 'true') return;
+    link.dataset.gaLineTracked = 'true';
     link.addEventListener('click', () => {
       if (typeof gtag === 'function') {
-        gtag('event', 'generate_lead', {event_category: 'site_menu', event_label: 'official_line'});
+        gtag('event', 'line_click', {
+          event_category: 'contact',
+          event_label: link.closest('.site-menu') ? 'site_menu' : 'page_cta',
+          link_url: link.href
+        });
       }
-    })
-  );
+    });
+  });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') setOpen(false);
   });
