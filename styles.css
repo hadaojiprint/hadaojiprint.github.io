@@ -282,4 +282,6 @@ footer{background:#132e25;border-top-color:var(--sand)}
   body.article-page .article-content section{min-width:0;max-width:100%}
   body.article-page .article-content img{max-width:100%;height:auto}
   body.article-page .format-compare{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-}
+}\n
+.canva-screen-grid{display:grid;gap:22px;margin:28px 0}.canva-screen-grid figure{margin:0;background:#fff;border:5px solid #70401f;box-shadow:8px 8px #ddb449}.canva-screen-grid img{display:block;width:100%;height:auto;background:#f6f2df}.canva-screen-grid figcaption{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:center;padding:16px 20px;font-family:"Yu Gothic",sans-serif;line-height:1.7}.canva-screen-grid figcaption b{color:#128044;font-size:15px}.canva-screen-grid figcaption span{font-size:13px}
+@media(max-width:760px){.canva-screen-grid figure{box-shadow:5px 5px #ddb449}.canva-screen-grid figcaption{grid-template-columns:1fr;gap:5px;padding:13px 15px}.canva-screen-grid figcaption b{font-size:14px}.canva-screen-grid figcaption span{font-size:12px}}
