@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">CanvaからPNGまたはPDFを保存する操作イメージ</title>
+  <desc id="desc">共有メニューからファイル形式と背景透過を選びダウンロードする図解</desc>
+  <rect width="1200" height="675" rx="28" fill="#f6f2df"/>
+  <rect x="28" y="28" width="1144" height="619" rx="22" fill="#173c2d" stroke="#70401f" stroke-width="8"/>
+  <rect x="75" y="85" width="600" height="500" rx="18" fill="#eef0e8"/>
+  <path d="M248 205l127-66 127 66 102 55-58 128-65-31v128H269V357l-65 31-58-128z" fill="#fff" stroke="#70401f" stroke-width="7"/>
+  <text x="306" y="313" fill="#173c2d" font-family="Arial" font-size="39" font-weight="900">YOUR</text>
+  <text x="288" y="360" fill="#159447" font-family="Arial" font-size="39" font-weight="900">DESIGN</text>
+  <rect x="730" y="70" width="400" height="535" rx="20" fill="#fff" stroke="#ffcf41" stroke-width="8"/>
+  <text x="775" y="126" fill="#173c2d" font-family="Arial, 'Yu Gothic', sans-serif" font-size="29" font-weight="900">ダウンロード</text>
+  <text x="775" y="183" fill="#4c4637" font-family="Arial, 'Yu Gothic', sans-serif" font-size="20" font-weight="700">ファイルの種類</text>
+  <rect x="775" y="202" width="310" height="58" rx="10" fill="#f6f2df" stroke="#70401f" stroke-width="4"/>
+  <text x="800" y="240" fill="#173c2d" font-family="Arial, 'Yu Gothic', sans-serif" font-size="25" font-weight="700">PNG　⌄</text>
+  <rect x="775" y="305" width="32" height="32" rx="5" fill="#159447"/><path d="M783 321l8 8 15-18" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="826" y="331" fill="#173c2d" font-family="Arial, 'Yu Gothic', sans-serif" font-size="23" font-weight="700">背景を透過</text>
+  <text x="775" y="380" fill="#706957" font-family="Arial, 'Yu Gothic', sans-serif" font-size="18">※利用プランにより表示が異なります</text>
+  <rect x="775" y="430" width="310" height="76" rx="14" fill="#ffcf41"/>
+  <text x="858" y="478" fill="#242018" font-family="Arial, 'Yu Gothic', sans-serif" font-size="27" font-weight="900">ダウンロード</text>
+  <text x="783" y="556" fill="#173c2d" font-family="Arial, 'Yu Gothic', sans-serif" font-size="19" font-weight="700">文字中心ならPDF（印刷）も保存</text>
+  <rect x="352" y="602" width="496" height="45" rx="11" fill="#fff"/>
+  <text x="413" y="632" fill="#173c2d" font-family="Arial, 'Yu Gothic', sans-serif" font-size="22" font-weight="700">STEP 3 PNGまたはPDFで保存</text>
+</svg>
