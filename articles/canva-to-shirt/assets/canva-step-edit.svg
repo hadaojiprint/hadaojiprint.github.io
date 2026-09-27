@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Canvaで文字やロゴを配置する操作イメージ</title>
+  <desc id="desc">左側の素材メニューと中央の編集キャンバスでTシャツ用デザインを作る図解</desc>
+  <rect width="1200" height="675" rx="28" fill="#f6f2df"/>
+  <rect x="28" y="28" width="1144" height="619" rx="22" fill="#e9e4d4" stroke="#70401f" stroke-width="8"/>
+  <rect x="32" y="32" width="1136" height="72" rx="17" fill="#173c2d"/>
+  <text x="74" y="79" fill="#fff" font-family="Arial, 'Yu Gothic', sans-serif" font-size="26" font-weight="700">Tシャツデザイン</text>
+  <rect x="915" y="45" width="218" height="46" rx="12" fill="#ffcf41"/>
+  <text x="965" y="77" fill="#242018" font-family="Arial, 'Yu Gothic', sans-serif" font-size="22" font-weight="700">共有・保存</text>
+  <rect x="32" y="108" width="225" height="535" fill="#fff"/>
+  <g font-family="Arial, 'Yu Gothic', sans-serif" font-size="22" font-weight="700" fill="#173c2d">
+    <rect x="52" y="138" width="185" height="58" rx="10" fill="#d9f2e3"/><text x="83" y="175">デザイン</text>
+    <rect x="52" y="215" width="185" height="58" rx="10" fill="#fff4bd"/><text x="83" y="252">素材</text>
+    <rect x="52" y="292" width="185" height="58" rx="10" fill="#fff4bd"/><text x="83" y="329">テキスト</text>
+    <rect x="52" y="369" width="185" height="58" rx="10" fill="#fff4bd"/><text x="83" y="406">アップロード</text>
+  </g>
+  <rect x="315" y="143" width="610" height="440" rx="16" fill="#fff" stroke="#159447" stroke-width="6"/>
+  <path d="M480 229l140-73 140 73 115 61-66 143-71-35v139H502V398l-71 35-66-143z" fill="#111" stroke="#242018" stroke-width="8"/>
+  <rect x="520" y="294" width="200" height="117" rx="8" fill="none" stroke="#ffcf41" stroke-width="5" stroke-dasharray="12 10"/>
+  <text x="552" y="342" fill="#fff" font-family="Arial" font-size="38" font-weight="900">HADAOJI</text>
+  <text x="574" y="381" fill="#ffcf41" font-family="Arial" font-size="29" font-weight="900">PRINT</text>
+  <g transform="translate(960 177)">
+    <rect width="175" height="268" rx="16" fill="#fff" stroke="#70401f" stroke-width="5"/>
+    <text x="23" y="43" fill="#173c2d" font-family="Arial, 'Yu Gothic', sans-serif" font-size="20" font-weight="700">文字・ロゴ</text>
+    <text x="23" y="72" fill="#173c2d" font-family="Arial, 'Yu Gothic', sans-serif" font-size="20" font-weight="700">写真を配置</text>
+    <circle cx="45" cy="118" r="20" fill="#111"/><circle cx="91" cy="118" r="20" fill="#ffcf41"/><circle cx="137" cy="118" r="20" fill="#159447"/>
+    <path d="M25 170h125M25 204h92" stroke="#173c2d" stroke-width="10" stroke-linecap="round"/>
+    <rect x="25" y="229" width="125" height="25" rx="7" fill="#d9f2e3"/>
+  </g>
+  <rect x="400" y="602" width="400" height="45" rx="11" fill="#173c2d"/>
+  <text x="462" y="632" fill="#fff" font-family="Arial, 'Yu Gothic', sans-serif" font-size="22" font-weight="700">STEP 2 文字・写真・ロゴを配置</text>
+</svg>
