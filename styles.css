@@ -267,3 +267,19 @@ footer{background:#132e25;border-top-color:var(--sand)}
 .article-visual img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover}
 .article-visual figcaption{margin:0;padding:12px 14px;color:#fff7d6;background:#171717;font-size:.88rem;line-height:1.7;border-top:2px solid #f7c928}
 @media(max-width:640px){.article-visual{margin:22px -4px 6px;border-width:2px;box-shadow:4px 4px 0 #000}.article-visual figcaption{padding:10px 12px;font-size:.82rem}}
+
+
+/* 2026-09-27 mobile article width hotfix */
+@media(max-width:620px){
+  html,body.article-page{width:100%;max-width:100%;overflow-x:clip}
+  body.article-page .game-header,
+  body.article-page main,
+  body.article-page main>article,
+  body.article-page .article-hero{width:100vw;max-width:100vw}
+  body.article-page .game-header{left:0;right:auto}
+  body.article-page .article-layout{width:100%;max-width:100%;min-width:0}
+  body.article-page .article-content,
+  body.article-page .article-content section{min-width:0;max-width:100%}
+  body.article-page .article-content img{max-width:100%;height:auto}
+  body.article-page .format-compare{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
