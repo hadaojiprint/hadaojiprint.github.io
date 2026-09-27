@@ -37,7 +37,7 @@
     {id: 'volcano', name: 'プリント火山島', treasure: '炎のスキージ', articles: ['/articles/dtf-vs-silk/', '/articles/thirty-shirts-price/']},
     {id: 'beach', name: 'サイズの砂浜', treasure: '潮風の定規', articles: ['/articles/print-size-position/', '/articles/team-shirts/']},
     {id: 'forest', name: 'デザインの森', treasure: '黄金のデザインペン', articles: ['/articles/canva-to-shirt/', '/articles/low-resolution-image/', '/articles/ai-image-print/', '/articles/start-apparel-brand/']},
-    {id: 'mountain', name: 'ボディの山', treasure: '伝説のTシャツ', articles: ['/articles/cvt-vs-act/', '/articles/one-shirt/']}
+    {id: 'mountain', name: 'ボディの山', treasure: '伝説のTシャツ', articles: ['/articles/cvt-vs-act/', '/articles/one-shirt/', '/articles/tshirt-size-guide/']}
   ];
   const path = location.pathname.replace(/index\.html$/, '');
   let articlePaths = [
@@ -50,7 +50,8 @@
     '/articles/low-resolution-image/',
     '/articles/team-shirts/',
     '/articles/start-apparel-brand/',
-    '/articles/ai-image-print/'
+    '/articles/ai-image-print/',
+    '/articles/tshirt-size-guide/'
   ];
   const isArticle = path.startsWith('/articles/');
   const reward = path.startsWith('/articles/')
