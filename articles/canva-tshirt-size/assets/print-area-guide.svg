@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Tシャツのプリント位置別おすすめ作成サイズ</title>
+  <desc id="desc">左胸、胸中央、前面大きめの3種類について、実寸と推奨ピクセル数を示したドット絵図解</desc>
+  <rect width="1200" height="675" fill="#102e22"/>
+  <rect x="28" y="28" width="1144" height="619" fill="#fff8d8" stroke="#70401f" stroke-width="12"/>
+  <text x="600" y="78" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="36" fill="#173c2d">プリント位置から作成サイズを決める</text>
+  <g font-family="Yu Gothic, sans-serif" text-anchor="middle">
+    <g transform="translate(90 118)">
+      <rect width="300" height="455" fill="#ffffff" stroke="#168c43" stroke-width="8"/>
+      <path d="M92 88 L30 128 L62 202 L100 181 L100 352 L200 352 L200 181 L238 202 L270 128 L208 88 L183 73 Q150 100 117 73 Z" fill="#f8f4e8" stroke="#231b0b" stroke-width="8" stroke-linejoin="round"/>
+      <rect x="102" y="130" width="42" height="42" fill="#ffcf41" stroke="#70401f" stroke-width="5"/>
+      <text x="150" y="392" font-weight="900" font-size="25" fill="#173c2d">左胸</text>
+      <text x="150" y="423" font-weight="700" font-size="20" fill="#70401f">8〜10cm角</text>
+      <text x="150" y="448" font-weight="700" font-size="17" fill="#168c43">10cmなら1181px角</text>
+    </g>
+    <g transform="translate(450 118)">
+      <rect width="300" height="455" fill="#ffffff" stroke="#168c43" stroke-width="8"/>
+      <path d="M92 88 L30 128 L62 202 L100 181 L100 352 L200 352 L200 181 L238 202 L270 128 L208 88 L183 73 Q150 100 117 73 Z" fill="#f8f4e8" stroke="#231b0b" stroke-width="8" stroke-linejoin="round"/>
+      <rect x="94" y="136" width="112" height="142" fill="#ffcf41" stroke="#70401f" stroke-width="5" stroke-dasharray="10 7"/>
+      <text x="150" y="392" font-weight="900" font-size="25" fill="#173c2d">胸中央</text>
+      <text x="150" y="423" font-weight="700" font-size="20" fill="#70401f">A4程度 21×29.7cm</text>
+      <text x="150" y="448" font-weight="700" font-size="17" fill="#168c43">2480×3508px</text>
+    </g>
+    <g transform="translate(810 118)">
+      <rect width="300" height="455" fill="#ffffff" stroke="#168c43" stroke-width="8"/>
+      <path d="M92 88 L30 128 L62 202 L100 181 L100 352 L200 352 L200 181 L238 202 L270 128 L208 88 L183 73 Q150 100 117 73 Z" fill="#f8f4e8" stroke="#231b0b" stroke-width="8" stroke-linejoin="round"/>
+      <rect x="78" y="125" width="144" height="204" fill="#ffcf41" stroke="#70401f" stroke-width="5" stroke-dasharray="10 7"/>
+      <text x="150" y="392" font-weight="900" font-size="25" fill="#173c2d">前面大きめ</text>
+      <text x="150" y="423" font-weight="700" font-size="20" fill="#70401f">A3程度 29.7×42cm</text>
+      <text x="150" y="448" font-weight="700" font-size="17" fill="#168c43">3508×4961px</text>
+    </g>
+  </g>
+  <text x="600" y="620" text-anchor="middle" font-family="Yu Gothic, sans-serif" font-size="20" font-weight="700" fill="#70401f">数値は300ppi換算の目安。実際の最大加工範囲はTシャツ・サイズ・プリント方法で変わります。</text>
+</svg>

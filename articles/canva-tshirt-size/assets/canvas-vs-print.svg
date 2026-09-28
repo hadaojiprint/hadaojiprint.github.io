@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Canvaの作成サイズと完成プリントサイズの違い</title>
+  <desc id="desc">キャンバス全体、絵柄の範囲、Tシャツに印刷する実寸を区別する図解</desc>
+  <rect width="1200" height="675" fill="#102e22"/>
+  <rect x="34" y="34" width="1132" height="607" fill="#fff8d8" stroke="#70401f" stroke-width="10"/>
+  <text x="600" y="88" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="34" fill="#173c2d">キャンバスとプリント実寸は別に考える</text>
+  <g font-family="Yu Gothic, sans-serif" font-weight="700">
+    <rect x="100" y="145" width="340" height="390" fill="#ffffff" stroke="#168c43" stroke-width="8"/>
+    <rect x="155" y="205" width="230" height="265" fill="#fff1a5" stroke="#70401f" stroke-width="6" stroke-dasharray="13 9"/>
+    <circle cx="270" cy="295" r="62" fill="#ffcf41" stroke="#173c2d" stroke-width="7"/>
+    <path d="M210 395 L270 325 L330 395 Z" fill="#168c43" stroke="#173c2d" stroke-width="7"/>
+    <text x="270" y="575" text-anchor="middle" font-size="23" fill="#173c2d">Canvaのキャンバス</text>
+    <text x="270" y="605" text-anchor="middle" font-size="18" fill="#70401f">白い余白まで画像に含まれる</text>
+    <path d="M480 335 H690" stroke="#ffb900" stroke-width="20"/>
+    <path d="M690 335 L640 300 V370 Z" fill="#ffb900"/>
+    <path d="M785 195 L720 238 L752 310 L790 290 L790 515 L990 515 L990 290 L1028 310 L1060 238 L995 195 L960 175 Q890 220 820 175 Z" fill="#ffffff" stroke="#231b0b" stroke-width="9" stroke-linejoin="round"/>
+    <rect x="820" y="260" width="140" height="170" fill="#fff1a5" stroke="#70401f" stroke-width="6" stroke-dasharray="13 9"/>
+    <circle cx="890" cy="315" r="38" fill="#ffcf41" stroke="#173c2d" stroke-width="6"/>
+    <path d="M850 393 L890 345 L930 393 Z" fill="#168c43" stroke="#173c2d" stroke-width="6"/>
+    <text x="890" y="575" text-anchor="middle" font-size="23" fill="#173c2d">完成プリント実寸</text>
+    <text x="890" y="605" text-anchor="middle" font-size="18" fill="#70401f">「横20cm」のように別途指定する</text>
+  </g>
+</svg>
