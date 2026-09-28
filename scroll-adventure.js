@@ -729,10 +729,6 @@
     if (choice && choice !== button && choice !== soundButton && await unlockAudio()) playSelect();
   }, {passive: true});
 
-  document.querySelectorAll('.secret-route-link').forEach(link => link.addEventListener('click', () => {
-    if (typeof gtag === 'function') gtag('event', 'generate_lead', {event_category: 'secret_route', event_label: 'official_line'});
-  }));
-
   walker.addEventListener('click', async () => {
     playWalkerReaction('is-jumping', 520);
     setTimeout(() => {

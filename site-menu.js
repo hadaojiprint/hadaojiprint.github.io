@@ -92,7 +92,9 @@
         gtag('event', 'line_click', {
           event_category: 'contact',
           event_label: link.closest('.site-menu') ? 'site_menu' : 'page_cta',
-          link_url: link.href
+          link_url: link.href,
+          page_path: window.location.pathname,
+          link_text: (link.textContent || '').replace(/\s+/g, ' ').trim()
         });
       }
     });
