@@ -1,4 +1,25 @@
 (function () {
+  const setupYahooAdsTag = () => {
+    window.yjDataLayer = window.yjDataLayer || [];
+    window.ytag = window.ytag || function () {
+      window.yjDataLayer.push(arguments);
+    };
+    window.ytag({
+      type: 'ycl_cookie',
+      config: { ycl_use_non_cookie_storage: true }
+    });
+
+    if (!document.querySelector('script[data-yahoo-ads-tag]')) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://s.yimg.jp/images/listing/tool/cv/ytag.js';
+      script.dataset.yahooAdsTag = 'true';
+      document.head.appendChild(script);
+    }
+  };
+
+  setupYahooAdsTag();
+
   const menuMarkup = `
     <div class="site-menu-title">
       <div><small>PAUSE / SITE MENU</small><b>冒険メニュー</b></div>
@@ -95,6 +116,25 @@
           link_url: link.href,
           page_path: window.location.pathname,
           link_text: (link.textContent || '').replace(/\s+/g, ' ').trim()
+        });
+      }
+      if (typeof window.ytag === 'function') {
+        window.ytag({
+          type: 'yss_conversion',
+          config: {
+            yahoo_conversion_id: '1001404918',
+            yahoo_conversion_label: 'vC9dCI-n-4odELaTo4pE',
+            yahoo_conversion_value: '0'
+          }
+        });
+        window.ytag({
+          type: 'yjad_conversion',
+          config: {
+            yahoo_ydn_conv_io: 'MwrnwpKGl72LOwEpCftN5Q..',
+            yahoo_ydn_conv_label: 'WGV9JVJDDR912131IQ1381289',
+            yahoo_ydn_conv_transaction_id: '',
+            yahoo_ydn_conv_value: '0'
+          }
         });
       }
     });
