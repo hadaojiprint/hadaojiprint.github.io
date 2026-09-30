@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">納品サポートの挿絵</title>
+  <desc id="desc">箱とチェックマークを表すシンプルなイラスト</desc>
+  <rect x="10" y="10" width="140" height="140" rx="34" fill="#FFF7C7" stroke="#111" stroke-width="6"/>
+  <path d="M38 62h84v60H38z" fill="#fff" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M38 62 54 42h52l16 20" fill="#FFD21F" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M80 42v80" stroke="#111" stroke-width="5"/>
+  <path d="M54 86h25" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="113" cy="105" r="24" fill="#FFD21F" stroke="#111" stroke-width="6"/>
+  <path d="m101 105 8 8 17-20" fill="none" stroke="#111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">丁寧な制作の挿絵</title>
+  <desc id="desc">手作業でプリントする様子のシンプルなイラスト</desc>
+  <rect x="10" y="10" width="140" height="140" rx="34" fill="#FFF7C7" stroke="#111" stroke-width="6"/>
+  <rect x="36" y="92" width="88" height="34" rx="8" fill="#fff" stroke="#111" stroke-width="6"/>
+  <path d="M47 73h66v22H47z" fill="#FFD21F" stroke="#111" stroke-width="5"/>
+  <path d="M48 61h64" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+  <path d="M60 49h40" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+  <path d="M54 105h52" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  <path d="M55 116h34" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  <path d="M31 74c7-10 16-11 23-4 5 5 7 13 1 19l-11 11" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/>
+  <path d="M129 74c-7-10-16-11-23-4-5 5-7 13-1 19l11 11" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/>
+</svg>

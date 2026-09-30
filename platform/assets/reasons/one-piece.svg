@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">1枚から対応の挿絵</title>
+  <desc id="desc">一枚のTシャツを表すシンプルなイラスト</desc>
+  <rect x="10" y="10" width="140" height="140" rx="34" fill="#FFF7C7" stroke="#111" stroke-width="6"/>
+  <path d="M55 46 39 61 24 74l18 25 14-10v38h48V89l14 10 18-25-15-13-16-15-15 10H70L55 46Z" fill="#fff" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M70 56c3 8 17 8 20 0" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="80" cy="92" r="22" fill="#FFD21F" stroke="#111" stroke-width="5"/>
+  <path d="M80 80v24" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+  <path d="M73 87l7-7 7 7" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
