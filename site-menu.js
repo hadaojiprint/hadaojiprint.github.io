@@ -33,6 +33,7 @@
       <a href="/prices/"><span>05</span><b>料金目安</b><small>プリントイメージで参考価格を見る</small></a>
       <a href="/works/"><span>06</span><b>制作事例</b><small>プリント装備を見る</small></a>
       <a href="/faq/"><span>07</span><b>よくある質問</b><small>冒険者の酒場で疑問を解決</small></a>
+      <a href="/tools/tshirt-simulator/"><span>HPS</span><b>プリントシミュレーター</b><small>ウェアに画像・文字を載せてみる</small></a>
       <a class="menu-estimate" href="/estimate/"><span>GO</span><b>無料見積もり</b><small>分かる項目だけで相談OK</small></a>
       <a class="menu-line line-contact-link" href="https://lin.ee/YDuYZbM" target="_blank" rel="noopener"><span>裏</span><b>公式LINEで相談</b><small>クリアできないときの救済ルート</small></a>
     </nav>
@@ -84,6 +85,17 @@
     menu.hidden = true;
     menu.innerHTML = menuMarkup;
     document.body.appendChild(menu);
+  }
+
+  // Existing article menus also receive the simulator link.
+  if (!menu.querySelector('a[href="/tools/tshirt-simulator/"]')) {
+    const nav = menu.querySelector('nav');
+    if (nav) {
+      const link = document.createElement('a');
+      link.href = '/tools/tshirt-simulator/';
+      link.innerHTML = '<span>HPS</span><b>プリントシミュレーター</b><small>ウェアに画像・文字を載せてみる</small>';
+      nav.insertBefore(link, nav.querySelector('.menu-estimate'));
+    }
   }
 
   const setOpen = (open) => {
