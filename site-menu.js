@@ -34,6 +34,7 @@
       <a href="/works/"><span>06</span><b>制作事例</b><small>プリント装備を見る</small></a>
       <a href="/faq/"><span>07</span><b>よくある質問</b><small>冒険者の酒場で疑問を解決</small></a>
       <a href="/tools/tshirt-simulator/"><span>HPS</span><b>プリントシミュレーター</b><small>ウェアに画像・文字を載せてみる</small></a>
+      <a href="/tools/print-data/"><span>HCG</span><b>クリッピングジェネレータ</b><small>背景色を除去し、実寸・PPIを整える</small></a>
       <a class="menu-estimate" href="/estimate/"><span>GO</span><b>無料見積もり</b><small>分かる項目だけで相談OK</small></a>
       <a class="menu-line line-contact-link" href="https://lin.ee/YDuYZbM" target="_blank" rel="noopener"><span>裏</span><b>公式LINEで相談</b><small>クリアできないときの救済ルート</small></a>
     </nav>
@@ -95,6 +96,18 @@
       link.href = '/tools/tshirt-simulator/';
       link.innerHTML = '<span>HPS</span><b>プリントシミュレーター</b><small>ウェアに画像・文字を載せてみる</small>';
       nav.insertBefore(link, nav.querySelector('.menu-estimate'));
+    }
+  }
+
+  // Add HCG to existing page menus without duplicating their links.
+  if (!menu.querySelector('a[href="/tools/print-data/"]')) {
+    const nav = menu.querySelector('nav');
+    if (nav) {
+      const link = document.createElement('a');
+      link.href = '/tools/print-data/';
+      link.innerHTML = '<span>HCG</span><b>クリッピングジェネレータ</b><small>背景色を除去し、実寸・PPIを整える</small>';
+      const simulator = nav.querySelector('a[href="/tools/tshirt-simulator/"]');
+      nav.insertBefore(link, simulator ? simulator.nextSibling : nav.querySelector('.menu-estimate'));
     }
   }
 
