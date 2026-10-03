@@ -69,3 +69,14 @@ export function withPpi(png,ppi){
   if(!inserted)throw Error('PNGヘッダーがありません。');
   const out=new Uint8Array(chunks.reduce((a,c)=>a+c.length,0));let pos=0;for(const c of chunks){out.set(c,pos);pos+=c.length;}return out;
 }
+
+// Colour-key all matching pixels, including disconnected and enclosed regions.
+export function removeColour(rgba,w,h,colour,tolerance){
+  const mask=new Uint8Array(w*h).fill(255);let removed=0;
+  for(let i=0;i<mask.length;i++){
+    const j=i*4;if(rgba[j+3]===0)continue;
+    const d=Math.max(Math.abs(rgba[j]-colour[0]),Math.abs(rgba[j+1]-colour[1]),Math.abs(rgba[j+2]-colour[2]));
+    if(d<=tolerance){mask[i]=0;removed++;}
+  }
+  return {mask,removed};
+}

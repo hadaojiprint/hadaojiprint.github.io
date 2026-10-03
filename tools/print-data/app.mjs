@@ -1,4 +1,4 @@
-import {bounds,dimensions,removeBackground,cornerColour,paint,withPpi} from './core.mjs';
+import {bounds,dimensions,removeColour,cornerColour,paint,withPpi} from './core.mjs?v=colour2';
 const $=id=>document.getElementById(id),canvas=$('preview'),ctx=canvas.getContext('2d',{willReadFrequently:true});
 const source=document.createElement('canvas'),sctx=source.getContext('2d',{willReadFrequently:true});
 let rgba,mask,w=0,h=0,history=[],mode='view',before=false,seed=null,stroke=null,fileName='design',saveUrl=null,busy=false;
@@ -31,7 +31,7 @@ function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(source,0,0,canvas.width,canvas.height);
   $('image-info').textContent=`${w} × ${h} px ／ ${before?'元画像':'加工後（市松模様は透明部分）'}`;
 }
-function setMode(value){mode=value;before=false;$('after').setAttribute('aria-pressed','true');$('before').setAttribute('aria-pressed','false');canvas.style.touchAction=mode==='view'?'pan-y':'none';canvas.style.cursor=mode==='view'?'default':'crosshair';document.querySelectorAll('[data-mode]').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.mode===mode)));$('edit-hint').textContent=mode==='view'?'閲覧中はプレビュー上でもスクロールできます。':mode==='pick'?'背景をタップして色を指定。続けて「背景を自動除去」を押してください。':'プレビューをなぞって調整。編集する間だけ、この画面内のスクロールを止めます。';draw();}
+function setMode(value){mode=value;before=false;$('after').setAttribute('aria-pressed','true');$('before').setAttribute('aria-pressed','false');canvas.style.touchAction=mode==='view'?'pan-y':'none';canvas.style.cursor=mode==='view'?'default':'crosshair';document.querySelectorAll('[data-mode]').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.mode===mode)));$('edit-hint').textContent=mode==='view'?'閲覧中はプレビュー上でもスクロールできます。':mode==='erase'?'消したい色をタップすると、画像全体の同じ色をまとめて除去します。色の許容範囲で近い色も調整できます。':mode==='pick'?'背景をタップして色を指定。続けて「背景を自動除去」を押してください。':'プレビューをなぞって調整。編集する間だけ、この画面内のスクロールを止めます。';draw();}
 function init(image,name){
   w=image.width;h=image.height;source.width=w;source.height=h;sctx.clearRect(0,0,w,h);sctx.drawImage(image,0,0);
   rgba=sctx.getImageData(0,0,w,h).data;mask=new Uint8Array(w*h).fill(255);history=[];seed=null;fileName=name.replace(/\.[^.]+$/,'').replace(/[^\w\u3000-\u9fff-]/g,'_').slice(0,60)||'design';
@@ -54,15 +54,15 @@ $('demo').onclick=()=>{
   d.fillStyle='#123b2d';d.beginPath();d.ellipse(380,350,200,130,0,0,Math.PI*2);d.fill();d.beginPath();d.moveTo(570,350);d.lineTo(700,230);d.lineTo(700,470);d.closePath();d.fill();
   d.fillStyle='#ffffff';d.beginPath();d.arc(290,315,35,0,Math.PI*2);d.fill();d.fillStyle='#123b2d';d.beginPath();d.arc(290,315,15,0,Math.PI*2);d.fill();
   d.strokeStyle='#ffd400';d.lineWidth=25;d.lineCap='round';d.beginPath();d.moveTo(150,550);d.quadraticCurveTo(260,470,380,550);d.quadraticCurveTo(500,630,650,550);d.stroke();
-  init(demo,'hadaoji-demo');tell('サンプルを読み込みました。自動除去しても、魚の目の内側にある白は残ります。');
+  init(demo,'hadaoji-demo');tell('サンプルを読み込みました。自動除去では、魚の目の内側も含めて白をまとめて除去します。');
 };
 $('auto').onclick=async()=>{
   if(!rgba||busy)return;lock(true);tell('背景を除去しています…');await new Promise(r=>setTimeout(r,20));
   try{
     const hex=$('bg-colour').value,c=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
-    const result=removeBackground(rgba,w,h,c,Number($('tolerance').value),seed);
+    const result=removeColour(rgba,w,h,c,Number($('tolerance').value));
     saveHistory();for(let i=0;i<mask.length;i++)mask[i]=Math.min(mask[i],result.mask[i]);before=false;setMode('view');updateDimensions();draw();
-    tell(result.removed?`背景を除去しました。文字の穴など、外周からつながっていない背景は、色指定でその場所を選ぶか「消す」で調整できます。`:'指定色の背景が見つかりませんでした。「背景の色を拾う」で背景を選んでください。');
+    tell(result.removed?`画像全体から指定色を除去しました。文字の内側や離れた場所も対象です。`:'指定色の背景が見つかりませんでした。「背景の色を拾う」で背景を選んでください。');
   }catch(e){tell('処理できませんでした。'+e.message,true);}finally{lock(false);summary();}
 };
 $('bg-colour').oninput=()=>{seed=null;};
@@ -71,10 +71,16 @@ $('brush').oninput=()=>{$('brush-value').textContent=$('brush').value;};
 document.querySelectorAll('[data-mode]').forEach(e=>e.onclick=()=>setMode(e.dataset.mode));
 for(const [id,value] of [['before',true],['after',false]])$(id).onclick=()=>{if(stroke!==null)return;before=value;mode='view';canvas.style.touchAction='pan-y';document.querySelectorAll('[data-mode]').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.mode==='view')));$('before').setAttribute('aria-pressed',String(value));$('after').setAttribute('aria-pressed',String(!value));draw();};
 function point(e){const r=canvas.getBoundingClientRect();return{x:Math.max(0,Math.min(w-1,(e.clientX-r.left)/r.width*w)),y:Math.max(0,Math.min(h-1,(e.clientY-r.top)/r.height*h))};}
-function brushAt(p){const r=Number($('brush').value)/100*Math.min(w,h)/2;paint(mask,w,h,p.x,p.y,r,mode==='erase'?0:255);}
+function brushAt(p){const r=Number($('brush').value)/100*Math.min(w,h)/2;paint(mask,w,h,p.x,p.y,r,mode==='brush-erase'?0:255);}
 canvas.onpointerdown=e=>{
   if(!rgba||busy||mode==='view'||stroke!==null)return;e.preventDefault();const p=point(e);
-  if(mode==='pick'){seed=Math.floor(p.y)*w+Math.floor(p.x);const i=seed*4;$('bg-colour').value='#'+[rgba[i],rgba[i+1],rgba[i+2]].map(v=>v.toString(16).padStart(2,'0')).join('');tell('背景の色を指定しました。「背景を自動除去」で、この場所につながる背景を消します。');return;}
+  if(mode==='pick'){seed=Math.floor(p.y)*w+Math.floor(p.x);const i=seed*4;$('bg-colour').value='#'+[rgba[i],rgba[i+1],rgba[i+2]].map(v=>v.toString(16).padStart(2,'0')).join('');tell('背景の色を指定しました。「背景を自動除去」で、画像全体の同じ色を消します。');return;}
+  if(mode==='erase'){
+    const i=(Math.floor(p.y)*w+Math.floor(p.x))*4;if(!rgba[i+3]||!mask[i/4]){tell('色が残っている部分をタップしてください。');return;}
+    const colour=[rgba[i],rgba[i+1],rgba[i+2]];$('bg-colour').value='#'+colour.map(v=>v.toString(16).padStart(2,'0')).join('');seed=null;
+    const result=removeColour(rgba,w,h,colour,Number($('tolerance').value));saveHistory();
+    for(let j=0;j<mask.length;j++)mask[j]=Math.min(mask[j],result.mask[j]);updateDimensions();draw();tell('タップした色を画像全体から除去しました。消しすぎたら「ひとつ戻す」で戻せます。');return;
+  }
   saveHistory();brushBefore=history[history.length-1];stroke={id:e.pointerId,last:p};canvas.setPointerCapture(e.pointerId);brushAt(p);invalidate();draw();
 };
 canvas.onpointermove=e=>{

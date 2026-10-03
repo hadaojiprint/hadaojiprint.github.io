@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {dimensions,removeBackground,bounds,paint,withPpi} from '../tools/print-data/core.mjs';
+import {dimensions,removeColour,removeBackground,bounds,paint,withPpi} from '../tools/print-data/core.mjs';
 function logo(){const rgba=new Uint8ClampedArray(7*7*4).fill(255);for(let y=1;y<=5;y++)for(let x=1;x<=5;x++){const i=(y*7+x)*4;rgba[i]=rgba[i+1]=rgba[i+2]=0;}const eye=(3*7+3)*4;rgba[eye]=rgba[eye+1]=rgba[eye+2]=255;return rgba;}
 test('white boundary is removed but enclosed white detail is retained',()=>{
   const rgba=logo(),{mask}=removeBackground(rgba,7,7,[255,255,255],30);
@@ -24,4 +24,11 @@ test('PNG export includes a single pHYs metre unit chunk, also when replaced',()
   const out=withPpi(withPpi(png,150),300);let pos=8,phys=[];while(pos<out.length){const len=new DataView(out.buffer,pos,4).getUint32(0);const type=String.fromCharCode(...out.slice(pos+4,pos+8));if(type==='pHYs')phys.push(out.slice(pos+8,pos+8+len));pos+=len+12;}
   assert.equal(phys.length,1);assert.equal(new DataView(phys[0].buffer).getUint32(0),11811);assert.equal(new DataView(phys[0].buffer).getUint32(4),11811);assert.equal(phys[0][8],1);
   assert.throws(()=>withPpi(png,0));assert.throws(()=>withPpi(new Uint8Array(20),300));
+});
+
+test('global colour removal includes enclosed and disconnected matching pixels',()=>{
+  const rgba=logo();rgba[4]=240;rgba[5]=240;rgba[6]=240;
+  const {mask}=removeColour(rgba,7,7,[255,255,255],10);
+  assert.equal(mask[0],0);assert.equal(mask[3*7+3],0);assert.equal(mask[1*7+1],255);assert.equal(mask[1],255);
+  assert.equal(removeColour(rgba,7,7,[255,255,255],15).mask[1],0);
 });
