@@ -7,7 +7,7 @@
   const target=e.target.closest('a,button');if(!target)return;
   if(actions[target.id]&&!target.disabled)send('tool_action',{action:actions[target.id]});
   if(target.tagName==='A'){let url;try{url=new URL(target.href,location.href);}catch{return;}
-   if(url.origin===location.origin){const tool=url.pathname.startsWith('/tools/print-data/')?'HCG':url.pathname.startsWith('/tools/tshirt-simulator/')?'HPS':null;if(tool)send('tool_navigation',{destination_tool:tool});}
+   if(url.origin===location.origin){const tool=url.pathname.startsWith('/tools/print-data/')?'HCG':url.pathname.startsWith('/tools/tshirt-simulator/')?'HPS':null;if(tool)send('tool_navigation',{destination_tool:tool});if(url.pathname.startsWith('/games/print-life/'))send('game_banner_click',{game_name:'print_life'});}
   }
  });
  document.addEventListener('change',e=>{if(e.target.matches('input[type=file]')&&e.target.files.length)send('tool_action',{action:'image_upload'});});
