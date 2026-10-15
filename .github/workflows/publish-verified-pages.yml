@@ -53,3 +53,30 @@ jobs:
       - name: Deploy verified site
         id: deployment
         uses: actions/deploy-pages@v4
+  verify-live:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v6
+      - name: Confirm the public LP matches this deployment
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, time, urllib.request
+          expected = hashlib.sha256(Path("platform/index.html").read_bytes()).hexdigest()
+          url = "https://hadaojiprint.github.io/platform/"
+          for attempt in range(3):
+              request = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  body = response.read()
+                  actual = hashlib.sha256(body).hexdigest()
+                  print("HTTP", response.status, "Last-Modified", response.headers.get("Last-Modified"), "SHA256", actual, flush=True)
+              if actual == expected:
+                  print("Public LP matches the verified deployment.")
+                  break
+              if attempt < 2:
+                  time.sleep(30)
+          else:
+              raise SystemExit("Publication mismatch: deployment succeeded, but the public LP is stale. Expected " + expected)
+          PY
