@@ -1,0 +1,55 @@
+name: Publish verified static website
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify canonical LP
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          import hashlib
+          class Check(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if "id" in attrs:
+                      self.ids.append(attrs["id"])
+          path = Path("platform/index.html")
+          html = path.read_text()
+          check = Check()
+          check.feed(html)
+          assert "first-shirt-price" in check.ids, "First-order price section missing"
+          assert len(check.ids) == len(set(check.ids)), "Duplicate section IDs"
+          assert 'content="noindex' not in html, "Canonical LP must remain indexable"
+          assert 'first-shirt-price' in Path("platform/style.css").read_text(), "LP styles missing"
+          print("Verified LP SHA256:", hashlib.sha256(path.read_bytes()).hexdigest())
+          PY
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: '.'
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy verified site
+        id: deployment
+        uses: actions/deploy-pages@v4
