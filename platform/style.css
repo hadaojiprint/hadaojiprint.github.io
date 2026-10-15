@@ -339,3 +339,18 @@ button { font: inherit; }
   .line-start-copy::after { right: 10px; bottom: 18px; width: 108px; height: 148px; opacity: 1; }
   .area-box::after { right: -42px; top: 24px; width: 150px; height: 150px; }
 }
+
+/* First-order consultation: retain the existing yellow, black and pixel-art identity. */
+#first-shirt-price{scroll-margin-top:90px;background:#fffdf6;color:#141414}
+.first-shirt-intro,.first-shirt-cards,.first-shirt-conditions,.first-shirt-consult{max-width:1100px;margin-left:auto;margin-right:auto}
+.first-shirt-intro h2{font-size:clamp(27px,4vw,45px);line-height:1.45;margin:0 0 16px}
+.first-shirt-intro>p:last-child{font-size:17px}
+.first-shirt-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:28px}
+.first-shirt-cards article{min-width:0;padding:28px;background:#fff;border:3px solid #141414;box-shadow:6px 6px #ffd21f}
+.first-shirt-cards article>span{font-size:14px;font-weight:800}.first-shirt-cards h3{font-size:23px;margin:8px 0}
+.first-shirt-cards strong{display:block;font-size:clamp(34px,4vw,50px);line-height:1.4}.first-shirt-cards strong small{font-size:15px;margin-left:6px;display:inline-block}
+.first-shirt-cards details{border-top:1px solid #ccc;padding-top:12px}.first-shirt-cards summary{cursor:pointer;font-weight:800;padding:10px 0;min-height:44px}.first-shirt-cards details p{font-size:15px}
+.first-shirt-conditions{font-size:14px;line-height:1.9;margin-top:26px}
+.first-shirt-consult{padding:26px;border-left:6px solid #ffd21f;background:#f1eee4;margin-top:26px}.first-shirt-consult h3{font-size:23px;margin:0}.first-shirt-consult>.btn{margin:12px 0;max-width:100%;text-align:center;min-height:56px}.first-shirt-more{display:block;text-decoration:underline;font-weight:800;padding:14px 0}.first-shirt-consult>small{display:block;font-size:14px;line-height:1.8}
+@media(max-width:900px){.first-shirt-cards{grid-template-columns:1fr;gap:22px}.first-shirt-cards article{padding:22px}.first-shirt-consult{padding:20px}.first-shirt-consult>.btn{width:100%;font-size:16px}.first-shirt-intro h2{font-size:28px}.first-shirt-conditions{font-size:14px}}
+@media(max-width:900px){body .hero{display:flex!important;flex-direction:column;align-items:stretch}body .hero-content{order:1;width:100%}body .hero-bg{order:2;width:100%;margin-top:24px}body .hero-card{order:3;width:auto;max-width:none;position:relative}body .mascot-hero{bottom:12px}}
