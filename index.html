@@ -55,6 +55,8 @@
 .home-articles .article-list article{position:relative}
 .home-articles .article-list article>div{min-width:0}
 .home-articles .article-list article>a{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;padding-right:18px;background:transparent;color:inherit}
+/* The full-card link must not cover titles when the reading-progress CSS marks a card clear. */
+.home-articles .article-list article.is-cleared>a{background:transparent;color:#0a6d36}
 .home-articles .article-list article:hover{border-color:#ffda55}
 .home-articles .article-list article>a:focus-visible{outline:4px solid #ffda55;outline-offset:3px}
 .home-articles .article-list h3{overflow-wrap:anywhere}
