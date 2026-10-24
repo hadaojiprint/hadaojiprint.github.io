@@ -54,6 +54,9 @@
 .home-articles{scroll-margin-top:100px}
 .home-articles .article-list article{position:relative}
 .home-articles .article-list article>div{min-width:0}
+/* Stack CLEAR inside the level column so it never overlaps the article title. */
+.home-articles .article-list .level{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.home-articles .article-list .level .article-clear-badge{display:block;margin:0;padding:3px 4px;font-size:8px;white-space:nowrap}
 .home-articles .article-list article>a{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;padding-right:18px;background:transparent;color:inherit}
 /* The full-card link must not cover titles when the reading-progress CSS marks a card clear. */
 .home-articles .article-list article.is-cleared>a{background:transparent;color:#0a6d36}
